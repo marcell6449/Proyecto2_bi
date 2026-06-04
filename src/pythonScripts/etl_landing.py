@@ -166,12 +166,13 @@ def configurar_logging(log_dir: Optional[str]) -> logging.Logger:
 def conectar_db(logger: logging.Logger) -> psycopg2.extensions.connection:
     load_dotenv()
     params = {
-        "host":     os.getenv("DB_HOST", "localhost"),
-        "port":     os.getenv("DB_PORT", "5432"),
-        "dbname":   os.getenv("DB_NAME", "fertilisadb"),
-        "user":     os.getenv("DB_USER", "admin"),
-        "password": os.getenv("DB_PASSWORD", "Fertilisa123"),
-    }
+    "host":     os.getenv("DB_HOST"),
+    "port":     os.getenv("DB_PORT", "5432"),
+    "dbname":   os.getenv("DB_NAME"),
+    "user":     os.getenv("DB_USER"),
+    "password": os.getenv("DB_PASSWORD"),
+    "sslmode":  os.getenv("DB_SSLMODE", "prefer"),  # ← agregar esta línea
+}
     try:
         conn = psycopg2.connect(**params)
         conn.autocommit = False
@@ -436,55 +437,79 @@ def actualizar_carga(cur, id_carga, estado, leidas, vacias,
 
 SQL_INSERT_FERTILISA = """
     INSERT INTO fertiliza_landing.lnd_fertilisa_raw (
-        id_carga, fila_excel, hoja_origen,
+        id_carga, fila_excel,
         col_a_raw, codigo_raw, nombre_raw,
         fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
         categoria_raw, es_fila_seccion, es_fila_vacia,
         lnd_tiene_codigo, lnd_tiene_nombre,
         lnd_fisico_numerico, lnd_sistema_numerico,
-        lnd_listo_para_stg, creado_en
+        lnd_listo_para_stg
     ) VALUES %s
-"""
+""" 
 
+
+        
+        
 def procesar_hoja_fertilisa(ws, cur, id_carga, logger):
     cnt = {"leidas": 0, "vacias": 0, "secciones": 0, "encabezados": 0, "insertadas": 0, "warnings": 0}
     
-    # Empezamos después de los títulos decorativos de arriba
-    for row in ws.iter_rows(min_row=4): 
+    registros_a_insertar = []
+    categoria_actual = None
+    fila_excel = 3
+    
+    for row in ws.iter_rows(min_row=4, values_only=True): 
         cnt["leidas"] += 1
+        fila_excel += 1
         
-        # Columna B es índice 1 (Código)
-        codigo_val = row[1].value 
-        producto_val = row[2].value
+        # Extracción segura usando tu función de utilidad
+        col_a_raw      = extraer_celda(row, ColFertilisa.A)
+        codigo_raw     = extraer_celda(row, ColFertilisa.CODIGO)
+        nombre_raw     = extraer_celda(row, ColFertilisa.NOMBRE)
+        fisico_raw     = extraer_celda(row, ColFertilisa.FISICO)
+        sistema_raw    = extraer_celda(row, ColFertilisa.SISTEMA)
+        diferencia_raw = extraer_celda(row, ColFertilisa.DIFERENCIA)
+        observacion_raw= extraer_celda(row, ColFertilisa.OBSERVACION)
         
-        if codigo_val is None and producto_val is None:
+        if es_fila_vacia_fertilisa(row):
             cnt["vacias"] += 1
             continue
             
-        codigo_str = str(codigo_val).strip() if codigo_val else ""
-        
-        # Detectar fila de encabezado
-        if codigo_str.lower() in ["codigo", "código"]:
+        if es_encabezado_columnas(codigo_raw):
             cnt["encabezados"] += 1
             continue
             
-        # Detectar si es una fila de sección (Tiene nombre en B pero no cantidades)
-        if codigo_val and row[3].value is None and row[4].value is None:
+        seccion_detectada = detectar_seccion_fertilisa(codigo_raw)
+        if seccion_detectada:
+            categoria_actual = seccion_detectada
             cnt["secciones"] += 1
+            
+            # Insertamos la fila de sección para mantener el registro, pero marcada
+            registros_a_insertar.append((
+                id_carga, fila_excel, col_a_raw, codigo_raw, nombre_raw,
+                fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
+                categoria_actual, True, False,  # es_seccion, es_vacia
+                False, False, False, False, False # flags lnd_* en falso
+            ))
             continue
             
-        # --- Aquí haces tu INSERT en Postgres usando los índices correctos ---
-        # row[1].value -> Codigo
-        # row[2].value -> Producto
-        # row[3].value -> Fisico
-        # row[4].value -> Sistema David
-        # row[5].value -> Diferencia
-        # row[6].value -> Observaciones
+        # Calcular flags de calidad para datos normales
+        flags = calcular_flags_fertilisa(codigo_raw, nombre_raw, fisico_raw, sistema_raw)
         
-        # cur.execute("INSERT INTO ...")
-        cnt["insertadas"] += 1
+        registros_a_insertar.append((
+            id_carga, fila_excel, col_a_raw, codigo_raw, nombre_raw,
+            fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
+            categoria_actual, False, False, # es_seccion, es_vacia
+            flags["lnd_tiene_codigo"], flags["lnd_tiene_nombre"],
+            flags["lnd_fisico_numerico"], flags["lnd_sistema_numerico"],
+            flags["lnd_listo_para_stg"]
+        ))
+
+    if registros_a_insertar:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_FERTILISA, registros_a_insertar)
+        cnt["insertadas"] += len(registros_a_insertar)
 
     return cnt
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 #  PROCESAMIENTO HOJA MANVERT, JIFFY
@@ -492,7 +517,7 @@ def procesar_hoja_fertilisa(ws, cur, id_carga, logger):
 
 SQL_INSERT_MANVERT = """
     INSERT INTO fertiliza_landing.lnd_manvert_jiffy_raw (
-        id_carga, fila_excel, hoja_origen,
+        id_carga, fila_excel,
         lote_raw, codigo_raw, nombre_raw, estado_lote_raw,
         fisico_raw, sistema_raw, diferencia_raw,
         observacion_raw, fecha_venc_raw, almacenaje_raw,
@@ -500,44 +525,59 @@ SQL_INSERT_MANVERT = """
         lnd_tiene_codigo, lnd_tiene_nombre,
         lnd_fisico_numerico, lnd_sistema_numerico,
         lnd_fecha_venc_parseable, lnd_almacenaje_numerico,
-        lnd_listo_para_stg, creado_en
+        lnd_listo_para_stg
     ) VALUES %s
 """
+
 
 def procesar_hoja_manvert_jiffy(ws, cur, id_carga, logger):
     cnt = {"leidas": 0, "vacias": 0, "secciones": 0, "encabezados": 0, "insertadas": 0, "warnings": 0}
     
-    for row in ws.iter_rows(min_row=4):
+    registros_a_insertar = []
+    fila_excel = 3
+    
+    for row in ws.iter_rows(min_row=4, values_only=True):
         cnt["leidas"] += 1
+        fila_excel += 1
         
-        codigo_val = row[1].value # Columna B
-        material_val = row[2].value # Columna C
+        lote_raw        = extraer_celda(row, ColManvert.LOTE)
+        codigo_raw      = extraer_celda(row, ColManvert.CODIGO)
+        nombre_raw      = extraer_celda(row, ColManvert.NOMBRE)
+        estado_lote_raw = extraer_celda(row, ColManvert.ESTADO)
+        fisico_raw      = extraer_celda(row, ColManvert.FISICO)
+        sistema_raw     = extraer_celda(row, ColManvert.SISTEMA)
+        diferencia_raw  = extraer_celda(row, ColManvert.DIFERENCIA)
+        observacion_raw = extraer_celda(row, ColManvert.OBSERVACION)
+        fecha_venc_raw  = extraer_celda(row, ColManvert.FECHA_VENC)
+        almacenaje_raw  = extraer_celda(row, ColManvert.ALMACENAJE)
         
-        if codigo_val is None and material_val is None:
+        if es_fila_vacia_manvert(row):
             cnt["vacias"] += 1
             continue
             
-        codigo_str = str(codigo_val).strip() if codigo_val else ""
-        
-        if codigo_str.lower() in ["codigo", "código"]:
+        if es_encabezado_columnas(codigo_raw):
             cnt["encabezados"] += 1
             continue
 
-        # Mapeo exclusivo respetando la columna 'Estado' intermedia
-        # row[1].value -> Codigo
-        # row[2].value -> Material (Producto)
-        # row[3].value -> Estado (Saltar o guardar si tu BD lo requiere)
-        # row[4].value -> Fisico
-        # row[5].value -> Sistema
-        # row[6].value -> Dif
-        # row[7].value -> Observaciones
+        flags = calcular_flags_manvert(codigo_raw, nombre_raw, fisico_raw, sistema_raw, fecha_venc_raw, almacenaje_raw)
         
-        # cur.execute("INSERT INTO ...")
-        cnt["insertadas"] += 1
+        registros_a_insertar.append((
+            id_carga, fila_excel,
+            lote_raw, codigo_raw, nombre_raw, estado_lote_raw,
+            fisico_raw, sistema_raw, diferencia_raw,
+            observacion_raw, fecha_venc_raw, almacenaje_raw,
+            False, False, # es_seccion, es_vacia
+            flags["lnd_tiene_codigo"], flags["lnd_tiene_nombre"],
+            flags["lnd_fisico_numerico"], flags["lnd_sistema_numerico"],
+            flags["lnd_fecha_venc_parseable"], flags["lnd_almacenaje_numerico"],
+            flags["lnd_listo_para_stg"]
+        ))
+        
+    if registros_a_insertar:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_MANVERT, registros_a_insertar)
+        cnt["insertadas"] += len(registros_a_insertar)
         
     return cnt
-
-
 # ─────────────────────────────────────────────────────────────────────────────
 #  CHECKLIST PRE-CARGA  (Sección 8 del documento de reglas)
 # ─────────────────────────────────────────────────────────────────────────────
