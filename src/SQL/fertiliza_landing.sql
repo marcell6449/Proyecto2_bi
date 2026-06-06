@@ -414,3 +414,105 @@ ORDER BY c.inicio_carga DESC;
 COMMENT ON VIEW v_resumen_cargas IS
   'Vista operativa para monitorear el estado de cada carga. '
   'Muestra cuántas filas están listas para pasar al OLTP y cuántas tienen problemas de calidad.';
+
+
+-- ================================================================================================================================
+--  ACTUALIZACIÓN v2.0 — Tablas para el archivo ARCHIVO_FERTILISA-INVESTIGACION.xlsx
+--  Hojas: LISTA DE PRODUCTOS y EJEMPLO DATOS KARDEX
+-- ================================================================================================================================
+
+-- --------------------------------------------------------------------------------------------------------------------------------
+--  LND_LISTA_PRODUCTOS_RAW — Catálogo de productos con precios del sistema David
+--  Estructura verificada (712 filas):
+--    Col A: Código     Col B: Descripción
+--    Col C: Precio 1   Col D: Precio 2   Col E: Precio 3   Col F: Existencia
+-- --------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS fertiliza_landing.lnd_lista_productos_raw (
+    id_lnd_prod      SERIAL          PRIMARY KEY,
+    id_carga         INT             NOT NULL REFERENCES fertiliza_landing.lnd_carga(id_carga),
+    fila_excel       INT,
+    hoja_origen      VARCHAR(60)     NOT NULL DEFAULT 'LISTA DE PRODUCTOS',
+
+    -- Datos tal como vienen del Excel
+    codigo_raw       VARCHAR(100),
+    descripcion_raw  VARCHAR(500),
+    precio1_raw      VARCHAR(50),
+    precio2_raw      VARCHAR(50),
+    precio3_raw      VARCHAR(50),
+    existencia_raw   VARCHAR(50),
+
+    -- Flags de calidad
+    lnd_tiene_codigo        BOOLEAN,
+    lnd_tiene_descripcion   BOOLEAN,
+    lnd_precio1_numerico    BOOLEAN,
+    lnd_existencia_numerica BOOLEAN,
+    lnd_listo_para_stg      BOOLEAN     NOT NULL DEFAULT FALSE,
+
+    creado_en        TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_lnd_prod_carga
+    ON fertiliza_landing.lnd_lista_productos_raw (id_carga);
+
+CREATE INDEX IF NOT EXISTS idx_lnd_prod_listo
+    ON fertiliza_landing.lnd_lista_productos_raw (id_carga, lnd_listo_para_stg)
+    WHERE lnd_listo_para_stg = TRUE;
+
+COMMENT ON TABLE fertiliza_landing.lnd_lista_productos_raw IS
+    'Landing zone para la hoja "LISTA DE PRODUCTOS" del archivo INVESTIGACION.xlsx. '
+    'Contiene el catálogo completo de SKUs con tres niveles de precio y existencia según Sistema David.';
+
+
+-- --------------------------------------------------------------------------------------------------------------------------------
+--  LND_KARDEX_RAW — Historial de movimientos de inventario
+--  Estructura verificada (731 filas):
+--    Col A: Tipo           Col B: Fecha         Col C: Documento
+--    Col D: Cliente/Prov   Col E: Costo         Col F: Entradas
+--    Col G: Precio         Col H: Salidas       Col I: Bodega
+--    Col J: CantidadToma
+--
+--  Tipos de movimiento encontrados:
+--    'Entrada Inventario-SI', 'Salida Inventario-SI', 'Toma Física',
+--    'Venta-CONSUMIDOR FINAL-SI', 'Venta-NOTA DE CRÉDITO FISOFT-SI', 'Entrada'
+-- --------------------------------------------------------------------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS fertiliza_landing.lnd_kardex_raw (
+    id_lnd_kardex    SERIAL          PRIMARY KEY,
+    id_carga         INT             NOT NULL REFERENCES fertiliza_landing.lnd_carga(id_carga),
+    fila_excel       INT,
+    hoja_origen      VARCHAR(60)     NOT NULL DEFAULT 'EJEMPLO DATOS KARDEX',
+
+    -- Datos tal como vienen del Excel
+    tipo_raw         VARCHAR(100),
+    fecha_raw        VARCHAR(50),
+    documento_raw    VARCHAR(100),
+    cliente_prov_raw VARCHAR(500),
+    costo_raw        VARCHAR(50),
+    entradas_raw     VARCHAR(50),
+    precio_raw       VARCHAR(50),
+    salidas_raw      VARCHAR(50),
+    bodega_raw       VARCHAR(100),
+    cantidad_toma_raw VARCHAR(50),
+
+    -- Flags de calidad
+    lnd_tiene_tipo          BOOLEAN,
+    lnd_fecha_parseable     BOOLEAN,
+    lnd_entradas_numericas  BOOLEAN,
+    lnd_salidas_numericas   BOOLEAN,
+    lnd_tipo_reconocido     BOOLEAN,
+    lnd_listo_para_stg      BOOLEAN     NOT NULL DEFAULT FALSE,
+
+    creado_en        TIMESTAMPTZ     NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_lnd_kardex_carga
+    ON fertiliza_landing.lnd_kardex_raw (id_carga);
+
+CREATE INDEX IF NOT EXISTS idx_lnd_kardex_listo
+    ON fertiliza_landing.lnd_kardex_raw (id_carga, lnd_listo_para_stg)
+    WHERE lnd_listo_para_stg = TRUE;
+
+COMMENT ON TABLE fertiliza_landing.lnd_kardex_raw IS
+    'Landing zone para la hoja "EJEMPLO DATOS KARDEX" del archivo INVESTIGACION.xlsx. '
+    'Contiene el historial de movimientos de inventario (entradas, salidas, ventas, tomas físicas) '
+    'desde 2021. Tipos reconocidos: Entrada Inventario-SI, Salida Inventario-SI, '
+    'Toma Física, Venta-CONSUMIDOR FINAL-SI, Venta-NOTA DE CRÉDITO FISOFT-SI, Entrada.';

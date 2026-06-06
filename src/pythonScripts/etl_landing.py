@@ -3,55 +3,42 @@
   ARCHIVO   : etl_landing.py
   PROYECTO  : Sistema de Gestión de Inventario — Fertilisa S.A.
   MÓDULO    : ETL Capa 0 — Excel → fertiliza_landing
-  VERSIÓN   : 2.0 — Mayo 2026
+  VERSIÓN   : 3.0 — Junio 2026
 
-  DESCRIPCIÓN:
-    Lee todos los archivos .xlsx de una carpeta y los carga en el schema
-    fertiliza_landing de PostgreSQL aplicando las reglas RL-01 a RL-10
-    documentadas en reglas_consolidadas_fertilisa.md v2.0
+  ARCHIVOS PROCESADOS:
+    Resumen.xlsx
+      - Hoja "Fertilisa"        → lnd_fertilisa_raw        (211 SKUs)
+      - Hoja "Manvert, Jiffy"   → lnd_manvert_jiffy_raw    (26 SKUs)
 
-  ESTRUCTURA REAL DEL ARCHIVO Resumen.xlsx (verificada sobre el archivo fuente):
-    Hoja "Fertilisa":
-      - Columna A (idx 0): siempre vacía
-      - Columna B (idx 1): código del producto (con apóstrofe líder) O nombre de sección
-      - Columna C (idx 2): nombre del producto (o texto decorativo en filas de sección)
-      - Columna D (idx 3): cantidad física (entero)
-      - Columna E (idx 4): cantidad sistema David (entero o None)
-      - Columna F (idx 5): diferencia (entero)
-      - Columna G (idx 6): observaciones (texto libre o None)
-      Filas especiales:
-        - Fila 4  : sección "Granular - Solubles"   (col B)
-        - Fila 5  : encabezado de columnas           (col B = "Codigo")
-        - Fila 113: sección "Liquidos"               (col B)
-        - Fila 114: encabezado de columnas repetido
-        - Fila 195: sección "Material para Invernaderos - Sustrato y Otros" (col B)
-        - Fila 196: encabezado de columnas repetido
-        Patrón: la sección está en col B, NO en col C
+    ARCHIVO FERTILISA-INVESTIGACION.xlsx
+      - Hoja "LISTA DE PRODUCTOS"   → lnd_lista_productos_raw (712 productos)
+      - Hoja "EJEMPLO DATOS KARDEX" → lnd_kardex_raw          (731 movimientos)
 
-    Hoja "Manvert, Jiffy":
-      - Columna A  (idx 0) : número de lote (entero o None)
-      - Columna B  (idx 1) : código (con apóstrofe)
-      - Columna C  (idx 2) : nombre del material
-      - Columna D  (idx 3) : estado del lote (569, 905, 1239, 'N/A')
-      - Columna E  (idx 4) : cantidad física
-      - Columna F  (idx 5) : cantidad sistema
-      - Columna G  (idx 6) : diferencia
-      - Columna H  (idx 7) : observaciones
-      - Columna I  (idx 8) : fecha vencimiento (datetime o 'N/A')
-      - Columna J  (idx 9) : SIEMPRE '#REF!' — fórmula rota, IGNORAR
-      - Columna K  (idx 10): None en todas las filas
-      - Columna L  (idx 11): días de almacenaje (entero o None)
-      Fila 4: encabezado de columnas (col B = "Codigo")
-      Datos desde fila 5 en adelante
+  ESTRUCTURA REAL VERIFICADA:
+    Fertilisa:
+      Col B(1): código (apóstrofe líder), Col C(2): nombre, Col D(3): físico,
+      Col E(4): sistema, Col F(5): diferencia, Col G(6): observación
+      Secciones en Col B: "Granular - Solubles", "Liquidos", "Material para Invernaderos..."
+
+    Manvert/Jiffy:
+      Col A(0): lote, Col B(1): código, Col C(2): nombre, Col D(3): estado lote,
+      Col E(4): físico, Col F(5): sistema, Col G(6): diferencia, Col H(7): observación,
+      Col I(8): fecha vencimiento, Col J(9): #REF! IGNORAR, Col L(11): almacenaje
+
+    Lista de Productos:
+      Col A(0): código, Col B(1): descripción, Col C(2): precio1,
+      Col D(3): precio2, Col E(4): precio3, Col F(5): existencia
+
+    Kardex:
+      Col A(0): tipo, Col B(1): fecha, Col C(2): documento,
+      Col D(3): cliente/proveedor, Col E(4): costo, Col F(5): entradas,
+      Col G(6): precio, Col H(7): salidas, Col I(8): bodega, Col J(9): cantidad_toma
 
   USO:
     python etl_landing.py --input-dir /ruta/carpeta [--log-dir ./logs] [--usuario nombre]
 
   DEPENDENCIAS:
     pip install openpyxl psycopg2-binary python-dotenv
-
-  VARIABLES DE ENTORNO (.env):
-    DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD
 ================================================================================
 """
 
@@ -72,63 +59,91 @@ from dotenv import load_dotenv
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CONSTANTES — basadas en la estructura real del archivo
+#  CONSTANTES
 # ─────────────────────────────────────────────────────────────────────────────
 
-SCRIPT_VERSION = "2.0.0"
+SCRIPT_VERSION = "3.0.0"
 
-# Hojas conocidas y su tipo interno
 HOJAS_CONOCIDAS = {
-    "Fertilisa":      "fertilisa",
-    "Manvert, Jiffy": "manvert_jiffy",
-    "Manvert,Jiffy":  "manvert_jiffy",
-    "Manvert Jiffy":  "manvert_jiffy",
+    "Fertilisa":             "fertilisa",
+    "Manvert, Jiffy":        "manvert_jiffy",
+    "Manvert,Jiffy":         "manvert_jiffy",
+    "Manvert Jiffy":         "manvert_jiffy",
+    "LISTA DE PRODUCTOS":    "lista_productos",
+    "EJEMPLO DATOS KARDEX":  "kardex",
 }
 
-# Nombres exactos de sección en col B de la hoja Fertilisa (RL-04)
-# Verificados directamente sobre el archivo fuente
 NOMBRES_SECCION = {
-    "granular - solubles":                              "Granular - Solubles",
-    "granular-solubles":                                "Granular - Solubles",
-    "liquidos":                                         "Liquidos",
-    "líquidos":                                         "Liquidos",
-    "material para invernaderos - sustrato y otros":    "Material para Invernaderos - Sustrato y Otros",
-    "material para invernaderos":                       "Material para Invernaderos - Sustrato y Otros",
+    "granular - solubles":                           "Granular - Solubles",
+    "granular-solubles":                             "Granular - Solubles",
+    "liquidos":                                      "Liquidos",
+    "líquidos":                                      "Liquidos",
+    "material para invernaderos - sustrato y otros": "Material para Invernaderos - Sustrato y Otros",
+    "material para invernaderos":                    "Material para Invernaderos - Sustrato y Otros",
 }
 
-# Valores que identifican una fila de encabezado de columnas (RL-07)
-VALORES_ENCABEZADO = {"codigo", "código", "cod", "code"}
+VALORES_ENCABEZADO = {"codigo", "código", "cod", "code", "tipo"}
 
-# Valor que indica fórmula rota en Manvert col J — debe ignorarse siempre
-VALOR_REF_ROTO = "#REF!"
+TIPOS_KARDEX_RECONOCIDOS = {
+    "Entrada Inventario-SI",
+    "Salida Inventario-SI",
+    "Toma Física",
+    "Venta-CONSUMIDOR FINAL-SI",
+    "Venta-NOTA DE CRÉDITO FISOFT-SI",
+    "Entrada",
+}
 
-# Índices de columna reales (base 0) — verificados sobre el archivo
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  ÍNDICES DE COLUMNAS
+# ─────────────────────────────────────────────────────────────────────────────
+
 class ColFertilisa:
-    A         = 0   # siempre vacía
-    CODIGO    = 1   # B: código o nombre de sección
-    NOMBRE    = 2   # C: nombre del producto
-    FISICO    = 3   # D: cantidad física
-    SISTEMA   = 4   # E: saldo Sistema David
-    DIFERENCIA = 5  # F: diferencia
-    OBSERVACION = 6 # G: observaciones
+    A          = 0
+    CODIGO     = 1
+    NOMBRE     = 2
+    FISICO     = 3
+    SISTEMA    = 4
+    DIFERENCIA = 5
+    OBSERVACION = 6
 
 class ColManvert:
-    LOTE       = 0   # A: número de lote (o None)
-    CODIGO     = 1   # B: código del producto
-    NOMBRE     = 2   # C: nombre del material
-    ESTADO     = 3   # D: estado del lote
-    FISICO     = 4   # E: cantidad física
-    SISTEMA    = 5   # F: saldo sistema
-    DIFERENCIA = 6   # G: diferencia
-    OBSERVACION = 7  # H: observaciones
-    FECHA_VENC  = 8  # I: fecha de vencimiento (datetime o 'N/A')
-    # Columna J (idx 9) = '#REF!' — SIEMPRE IGNORAR
-    # Columna K (idx 10) = None   — SIEMPRE IGNORAR
-    ALMACENAJE  = 11 # L: días de almacenaje (entero o None)
+    LOTE        = 0
+    CODIGO      = 1
+    NOMBRE      = 2
+    ESTADO      = 3
+    FISICO      = 4
+    SISTEMA     = 5
+    DIFERENCIA  = 6
+    OBSERVACION = 7
+    FECHA_VENC  = 8
+    # Col J (9) = #REF! IGNORAR SIEMPRE
+    # Col K (10) = None IGNORAR
+    ALMACENAJE  = 11
+
+class ColListaProductos:
+    CODIGO      = 0
+    DESCRIPCION = 1
+    PRECIO1     = 2
+    PRECIO2     = 3
+    PRECIO3     = 4
+    EXISTENCIA  = 5
+
+class ColKardex:
+    TIPO         = 0
+    FECHA        = 1
+    DOCUMENTO    = 2
+    CLIENTE_PROV = 3
+    COSTO        = 4
+    ENTRADAS     = 5
+    PRECIO       = 6
+    SALIDAS      = 7
+    BODEGA       = 8
+    CANTIDAD_TOMA = 9
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CONFIGURACIÓN DE LOGGING  (RB-07)
+#  LOGGING
 # ─────────────────────────────────────────────────────────────────────────────
 
 def configurar_logging(log_dir: Optional[str]) -> logging.Logger:
@@ -138,14 +153,11 @@ def configurar_logging(log_dir: Optional[str]) -> logging.Logger:
         fmt="%(asctime)s | %(levelname)-8s | %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S"
     )
-
-    # Consola: INFO y superior
     ch = logging.StreamHandler(sys.stdout)
     ch.setLevel(logging.INFO)
     ch.setFormatter(fmt)
     logger.addHandler(ch)
 
-    # Archivo: DEBUG y superior
     if log_dir:
         Path(log_dir).mkdir(parents=True, exist_ok=True)
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -160,19 +172,19 @@ def configurar_logging(log_dir: Optional[str]) -> logging.Logger:
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  CONEXIÓN A BASE DE DATOS  (RB-02)
+#  CONEXIÓN A BASE DE DATOS
 # ─────────────────────────────────────────────────────────────────────────────
 
 def conectar_db(logger: logging.Logger) -> psycopg2.extensions.connection:
     load_dotenv()
     params = {
-    "host":     os.getenv("DB_HOST"),
-    "port":     os.getenv("DB_PORT", "5432"),
-    "dbname":   os.getenv("DB_NAME"),
-    "user":     os.getenv("DB_USER"),
-    "password": os.getenv("DB_PASSWORD"),
-    "sslmode":  os.getenv("DB_SSLMODE", "prefer"),  # ← agregar esta línea
-}
+        "host":     os.getenv("DB_HOST", "localhost"),
+        "port":     os.getenv("DB_PORT", "5432"),
+        "dbname":   os.getenv("DB_NAME", "fertilisa"),
+        "user":     os.getenv("DB_USER", "postgres"),
+        "password": os.getenv("DB_PASSWORD", ""),
+        "sslmode":  os.getenv("DB_SSLMODE", "prefer"),
+    }
     try:
         conn = psycopg2.connect(**params)
         conn.autocommit = False
@@ -183,22 +195,15 @@ def conectar_db(logger: logging.Logger) -> psycopg2.extensions.connection:
         return conn
     except psycopg2.OperationalError as e:
         logger.critical(f"ERROR DE CONEXIÓN: {e}")
-        logger.critical("Proceso detenido. Verificar credenciales y disponibilidad del servidor.")
+        logger.critical("Proceso detenido. Verificar credenciales y servidor.")
         sys.exit(1)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  UTILIDADES DE LIMPIEZA  (Reglas RL-*)
+#  UTILIDADES DE LIMPIEZA
 # ─────────────────────────────────────────────────────────────────────────────
 
 def celda_a_str(valor) -> Optional[str]:
-    """
-    RL-03: Convierte cualquier valor de celda a string para almacenamiento en VARCHAR.
-    - datetime → ISO string 'YYYY-MM-DD'
-    - None     → None (NULL en BD)
-    - número   → str() sin notación científica
-    - texto    → strip(), None si queda vacío
-    """
     if valor is None:
         return None
     if isinstance(valor, (datetime, date)):
@@ -206,34 +211,19 @@ def celda_a_str(valor) -> Optional[str]:
     texto = str(valor).strip()
     return texto if texto else None
 
-
 def limpiar_codigo(valor_raw: Optional[str]) -> Optional[str]:
-    """
-    RL-01: Remueve el apóstrofe líder que Excel agrega para forzar formato texto.
-    Aplica además strip() (RL-02 aplicado a códigos).
-    """
     if not valor_raw:
         return None
     limpio = str(valor_raw).lstrip("'").strip()
     return limpio if limpio else None
 
-
 def limpiar_nombre(valor_raw: Optional[str]) -> Optional[str]:
-    """
-    RL-02: Colapsa espacios múltiples internos y aplica strip().
-    No modifica capitalización.
-    """
     if not valor_raw:
         return None
     limpio = re.sub(r" +", " ", str(valor_raw).strip())
     return limpio if limpio else None
 
-
 def es_numerico(valor_raw: Optional[str]) -> bool:
-    """
-    Verifica si un campo _raw puede convertirse a número.
-    Acepta enteros y decimales con coma o punto.
-    """
     if not valor_raw:
         return False
     try:
@@ -242,12 +232,7 @@ def es_numerico(valor_raw: Optional[str]) -> bool:
     except ValueError:
         return False
 
-
 def es_fecha_parseable(valor_raw: Optional[str]) -> bool:
-    """
-    RL-09: Verifica si un campo de fecha puede ser parseado.
-    None y 'N/A' son válidos (significa que no aplica).
-    """
     if not valor_raw:
         return True
     if valor_raw.upper() in ("N/A", "NA", "NONE", ""):
@@ -260,102 +245,89 @@ def es_fecha_parseable(valor_raw: Optional[str]) -> bool:
             continue
     return False
 
-
 def detectar_seccion_fertilisa(col_b_raw: Optional[str]) -> Optional[str]:
-    """
-    RL-04: Detecta si el valor de la columna B es un nombre de sección.
-    En la hoja Fertilisa, la sección está SIEMPRE en col B (no en col C).
-    Retorna el nombre canónico de la sección o None si no es sección.
-    """
     if not col_b_raw:
         return None
-    normalizado = str(col_b_raw).strip().lower()
-    return NOMBRES_SECCION.get(normalizado)
-
+    return NOMBRES_SECCION.get(str(col_b_raw).strip().lower())
 
 def es_encabezado_columnas(col_b_raw: Optional[str]) -> bool:
-    """
-    RL-07: Detecta la fila de encabezado de columnas repetida.
-    En Fertilisa y Manvert aparece como col B = 'Codigo'.
-    """
     if not col_b_raw:
         return False
     limpio = limpiar_codigo(col_b_raw)
     return bool(limpio) and limpio.lower() in VALORES_ENCABEZADO
 
+def es_fila_vacia(row: tuple, indices: list) -> bool:
+    return not any(
+        celda_a_str(row[i] if len(row) > i else None)
+        for i in indices
+    )
 
-def es_fila_vacia_fertilisa(row: tuple) -> bool:
-    """
-    RL-06: Fila vacía si código, nombre, físico y sistema son todos None o vacíos.
-    """
-    campos = [
-        celda_a_str(row[ColFertilisa.CODIGO]   if len(row) > ColFertilisa.CODIGO   else None),
-        celda_a_str(row[ColFertilisa.NOMBRE]    if len(row) > ColFertilisa.NOMBRE    else None),
-        celda_a_str(row[ColFertilisa.FISICO]    if len(row) > ColFertilisa.FISICO    else None),
-        celda_a_str(row[ColFertilisa.SISTEMA]   if len(row) > ColFertilisa.SISTEMA   else None),
-    ]
-    return not any(campos)
-
-
-def es_fila_vacia_manvert(row: tuple) -> bool:
-    """RL-06 para Manvert: vacía si código, nombre, físico y sistema son None."""
-    campos = [
-        celda_a_str(row[ColManvert.CODIGO]  if len(row) > ColManvert.CODIGO  else None),
-        celda_a_str(row[ColManvert.NOMBRE]  if len(row) > ColManvert.NOMBRE  else None),
-        celda_a_str(row[ColManvert.FISICO]  if len(row) > ColManvert.FISICO  else None),
-        celda_a_str(row[ColManvert.SISTEMA] if len(row) > ColManvert.SISTEMA else None),
-    ]
-    return not any(campos)
-
+def extraer_celda(row: tuple, idx: int) -> Optional[str]:
+    return celda_a_str(row[idx] if len(row) > idx else None)
 
 def calcular_flags_fertilisa(codigo_raw, nombre_raw, fisico_raw, sistema_raw) -> dict:
-    """
-    Calcula los flags lnd_* para una fila de lnd_fertilisa_raw.
-    Revisión superficial; la validación profunda ocurre en el staging del OLTP.
-    """
     tiene_codigo    = bool(limpiar_codigo(codigo_raw))
     tiene_nombre    = bool(limpiar_nombre(nombre_raw))
     fisico_num      = es_numerico(fisico_raw)
     sistema_num     = es_numerico(sistema_raw)
-    # Lista para pasar es suficiente tener código + nombre + físico numérico (RV-04: sistema vacío no bloquea)
-    listo           = tiene_codigo and tiene_nombre and fisico_num
     return {
         "lnd_tiene_codigo":     tiene_codigo,
         "lnd_tiene_nombre":     tiene_nombre,
         "lnd_fisico_numerico":  fisico_num,
         "lnd_sistema_numerico": sistema_num,
-        "lnd_listo_para_stg":   listo,
+        "lnd_listo_para_stg":   tiene_codigo and tiene_nombre and fisico_num,
     }
-
 
 def calcular_flags_manvert(codigo_raw, nombre_raw, fisico_raw, sistema_raw,
                            fecha_venc_raw, almacenaje_raw) -> dict:
-    """Calcula los flags lnd_* para una fila de lnd_manvert_jiffy_raw."""
-    tiene_codigo    = bool(limpiar_codigo(codigo_raw))
-    tiene_nombre    = bool(limpiar_nombre(nombre_raw))
-    fisico_num      = es_numerico(fisico_raw)
-    sistema_num     = es_numerico(sistema_raw)
-    fecha_parseable = es_fecha_parseable(fecha_venc_raw)
-    almac_num       = es_numerico(almacenaje_raw)
-    listo           = tiene_codigo and tiene_nombre and fisico_num
+    tiene_codigo   = bool(limpiar_codigo(codigo_raw))
+    tiene_nombre   = bool(limpiar_nombre(nombre_raw))
+    fisico_num     = es_numerico(fisico_raw)
+    sistema_num    = es_numerico(sistema_raw)
+    fecha_parse    = es_fecha_parseable(fecha_venc_raw)
+    almac_num      = es_numerico(almacenaje_raw)
     return {
         "lnd_tiene_codigo":          tiene_codigo,
         "lnd_tiene_nombre":          tiene_nombre,
         "lnd_fisico_numerico":       fisico_num,
         "lnd_sistema_numerico":      sistema_num,
-        "lnd_fecha_venc_parseable":  fecha_parseable,
+        "lnd_fecha_venc_parseable":  fecha_parse,
         "lnd_almacenaje_numerico":   almac_num,
-        "lnd_listo_para_stg":        listo,
+        "lnd_listo_para_stg":        tiene_codigo and tiene_nombre and fisico_num,
+    }
+
+def calcular_flags_lista_productos(codigo_raw, descripcion_raw,
+                                   precio1_raw, existencia_raw) -> dict:
+    tiene_codigo  = bool(limpiar_codigo(codigo_raw))
+    tiene_desc    = bool(limpiar_nombre(descripcion_raw))
+    precio1_num   = es_numerico(precio1_raw)
+    exist_num     = es_numerico(existencia_raw)
+    return {
+        "lnd_tiene_codigo":         tiene_codigo,
+        "lnd_tiene_descripcion":    tiene_desc,
+        "lnd_precio1_numerico":     precio1_num,
+        "lnd_existencia_numerica":  exist_num,
+        "lnd_listo_para_stg":       tiene_codigo and tiene_desc,
+    }
+
+def calcular_flags_kardex(tipo_raw, fecha_raw, entradas_raw, salidas_raw) -> dict:
+    tiene_tipo      = bool(tipo_raw and tipo_raw.strip())
+    fecha_parse     = es_fecha_parseable(fecha_raw)
+    entradas_num    = es_numerico(entradas_raw)
+    salidas_num     = es_numerico(salidas_raw)
+    tipo_reconocido = (tipo_raw or "").strip() in TIPOS_KARDEX_RECONOCIDOS
+    return {
+        "lnd_tiene_tipo":         tiene_tipo,
+        "lnd_fecha_parseable":    fecha_parse,
+        "lnd_entradas_numericas": entradas_num,
+        "lnd_salidas_numericas":  salidas_num,
+        "lnd_tipo_reconocido":    tipo_reconocido,
+        "lnd_listo_para_stg":     tiene_tipo and fecha_parse and tipo_reconocido,
     }
 
 
-def extraer_celda(row: tuple, idx: int) -> Optional[str]:
-    """Extrae la celda en el índice dado y la convierte a string seguro."""
-    return celda_a_str(row[idx] if len(row) > idx else None)
-
-
 # ─────────────────────────────────────────────────────────────────────────────
-#  CÁLCULO DE MD5  (RB-01)
+#  MD5
 # ─────────────────────────────────────────────────────────────────────────────
 
 def calcular_md5(ruta: Path) -> str:
@@ -371,7 +343,6 @@ def calcular_md5(ruta: Path) -> str:
 # ─────────────────────────────────────────────────────────────────────────────
 
 def verificar_duplicado(cur, hash_md5: str, logger: logging.Logger) -> bool:
-    """RB-01: Retorna True si el archivo ya fue procesado (mismo MD5)."""
     cur.execute("""
         SELECT id_archivo_log, nombre_archivo, inicio_proceso
         FROM fertiliza_landing.lnd_archivo_log
@@ -387,7 +358,6 @@ def verificar_duplicado(cur, hash_md5: str, logger: logging.Logger) -> bool:
         return True
     return False
 
-
 def registrar_archivo_log(cur, nombre, ruta, hash_md5, tamanio, usuario) -> int:
     cur.execute("""
         INSERT INTO fertiliza_landing.lnd_archivo_log
@@ -398,7 +368,6 @@ def registrar_archivo_log(cur, nombre, ruta, hash_md5, tamanio, usuario) -> int:
     """, (nombre, ruta, hash_md5, tamanio, usuario, SCRIPT_VERSION))
     return cur.fetchone()[0]
 
-
 def actualizar_archivo_log(cur, id_archivo, estado, total_filas,
                            filas_insertadas, mensaje=None):
     cur.execute("""
@@ -407,7 +376,6 @@ def actualizar_archivo_log(cur, id_archivo, estado, total_filas,
             mensaje=%s, fin_proceso=NOW()
         WHERE id_archivo_log=%s
     """, (estado, total_filas, filas_insertadas, mensaje, id_archivo))
-
 
 def registrar_carga(cur, id_archivo, hoja, periodo, usuario) -> int:
     cur.execute("""
@@ -418,7 +386,6 @@ def registrar_carga(cur, id_archivo, hoja, periodo, usuario) -> int:
         RETURNING id_carga
     """, (id_archivo, hoja, periodo, usuario))
     return cur.fetchone()[0]
-
 
 def actualizar_carga(cur, id_carga, estado, leidas, vacias,
                      secciones, insertadas, mensaje=None):
@@ -432,92 +399,95 @@ def actualizar_carga(cur, id_carga, estado, leidas, vacias,
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  PROCESAMIENTO HOJA FERTILISA
+#  PROCESAMIENTO: HOJA FERTILISA
 # ─────────────────────────────────────────────────────────────────────────────
 
 SQL_INSERT_FERTILISA = """
     INSERT INTO fertiliza_landing.lnd_fertilisa_raw (
-        id_carga, fila_excel,
+        id_carga, fila_excel, hoja_origen,
         col_a_raw, codigo_raw, nombre_raw,
         fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
         categoria_raw, es_fila_seccion, es_fila_vacia,
         lnd_tiene_codigo, lnd_tiene_nombre,
         lnd_fisico_numerico, lnd_sistema_numerico,
-        lnd_listo_para_stg
+        lnd_listo_para_stg, creado_en
     ) VALUES %s
-""" 
+"""
 
+def procesar_hoja_fertilisa(ws, cur, id_carga: int, logger: logging.Logger) -> dict:
+    cnt = {"leidas":0,"vacias":0,"secciones":0,"encabezados":0,"insertadas":0,"warnings":0}
+    categoria_actual: Optional[str] = None
+    buffer = []
+    BATCH = 200
 
-        
-        
-def procesar_hoja_fertilisa(ws, cur, id_carga, logger):
-    cnt = {"leidas": 0, "vacias": 0, "secciones": 0, "encabezados": 0, "insertadas": 0, "warnings": 0}
-    
-    registros_a_insertar = []
-    categoria_actual = None
-    fila_excel = 3
-    
-    for row in ws.iter_rows(min_row=4, values_only=True): 
+    for idx, row in enumerate(ws.iter_rows(min_row=4, values_only=True), start=4):
         cnt["leidas"] += 1
-        fila_excel += 1
-        
-        # Extracción segura usando tu función de utilidad
-        col_a_raw      = extraer_celda(row, ColFertilisa.A)
-        codigo_raw     = extraer_celda(row, ColFertilisa.CODIGO)
-        nombre_raw     = extraer_celda(row, ColFertilisa.NOMBRE)
-        fisico_raw     = extraer_celda(row, ColFertilisa.FISICO)
-        sistema_raw    = extraer_celda(row, ColFertilisa.SISTEMA)
-        diferencia_raw = extraer_celda(row, ColFertilisa.DIFERENCIA)
-        observacion_raw= extraer_celda(row, ColFertilisa.OBSERVACION)
-        
-        if es_fila_vacia_fertilisa(row):
+
+        col_a = extraer_celda(row, ColFertilisa.A)
+        col_b = extraer_celda(row, ColFertilisa.CODIGO)
+        col_c = extraer_celda(row, ColFertilisa.NOMBRE)
+        col_d = extraer_celda(row, ColFertilisa.FISICO)
+        col_e = extraer_celda(row, ColFertilisa.SISTEMA)
+        col_f = extraer_celda(row, ColFertilisa.DIFERENCIA)
+        col_g = extraer_celda(row, ColFertilisa.OBSERVACION)
+
+        if es_fila_vacia(row, [ColFertilisa.CODIGO, ColFertilisa.NOMBRE,
+                                ColFertilisa.FISICO, ColFertilisa.SISTEMA]):
             cnt["vacias"] += 1
             continue
-            
-        if es_encabezado_columnas(codigo_raw):
+
+        if es_encabezado_columnas(col_b):
             cnt["encabezados"] += 1
             continue
-            
-        seccion_detectada = detectar_seccion_fertilisa(codigo_raw)
-        if seccion_detectada:
-            categoria_actual = seccion_detectada
+
+        nombre_sec = detectar_seccion_fertilisa(col_b)
+        if nombre_sec:
+            categoria_actual = nombre_sec
             cnt["secciones"] += 1
-            
-            # Insertamos la fila de sección para mantener el registro, pero marcada
-            registros_a_insertar.append((
-                id_carga, fila_excel, col_a_raw, codigo_raw, nombre_raw,
-                fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
-                categoria_actual, True, False,  # es_seccion, es_vacia
-                False, False, False, False, False # flags lnd_* en falso
-            ))
+            logger.info(f"  F{idx}: sección → '{categoria_actual}'")
             continue
-            
-        # Calcular flags de calidad para datos normales
-        flags = calcular_flags_fertilisa(codigo_raw, nombre_raw, fisico_raw, sistema_raw)
-        
-        registros_a_insertar.append((
-            id_carga, fila_excel, col_a_raw, codigo_raw, nombre_raw,
-            fisico_raw, sistema_raw, diferencia_raw, observacion_raw,
-            categoria_actual, False, False, # es_seccion, es_vacia
+
+        flags = calcular_flags_fertilisa(col_b, col_c, col_d, col_e)
+        cod_limpio = limpiar_codigo(col_b)
+
+        if not flags["lnd_sistema_numerico"] and col_d:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-04: sistema vacío (código='{cod_limpio}')")
+        if flags["lnd_tiene_codigo"] and not flags["lnd_tiene_nombre"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-02: código sin nombre ('{cod_limpio}')")
+        elif flags["lnd_tiene_nombre"] and not flags["lnd_tiene_codigo"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-01: nombre sin código")
+
+        buffer.append((
+            id_carga, idx, "Fertilisa",
+            col_a, col_b, col_c, col_d, col_e, col_f,
+            col_g if col_g and col_g.strip() else None,
+            categoria_actual, False, False,
             flags["lnd_tiene_codigo"], flags["lnd_tiene_nombre"],
             flags["lnd_fisico_numerico"], flags["lnd_sistema_numerico"],
-            flags["lnd_listo_para_stg"]
+            flags["lnd_listo_para_stg"], datetime.now()
         ))
+        cnt["insertadas"] += 1
 
-    if registros_a_insertar:
-        psycopg2.extras.execute_values(cur, SQL_INSERT_FERTILISA, registros_a_insertar)
-        cnt["insertadas"] += len(registros_a_insertar)
+        if len(buffer) >= BATCH:
+            psycopg2.extras.execute_values(cur, SQL_INSERT_FERTILISA, buffer)
+            buffer.clear()
+
+    if buffer:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_FERTILISA, buffer)
 
     return cnt
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  PROCESAMIENTO HOJA MANVERT, JIFFY
+#  PROCESAMIENTO: HOJA MANVERT/JIFFY
 # ─────────────────────────────────────────────────────────────────────────────
 
 SQL_INSERT_MANVERT = """
     INSERT INTO fertiliza_landing.lnd_manvert_jiffy_raw (
-        id_carga, fila_excel,
+        id_carga, fila_excel, hoja_origen,
         lote_raw, codigo_raw, nombre_raw, estado_lote_raw,
         fisico_raw, sistema_raw, diferencia_raw,
         observacion_raw, fecha_venc_raw, almacenaje_raw,
@@ -525,154 +495,290 @@ SQL_INSERT_MANVERT = """
         lnd_tiene_codigo, lnd_tiene_nombre,
         lnd_fisico_numerico, lnd_sistema_numerico,
         lnd_fecha_venc_parseable, lnd_almacenaje_numerico,
-        lnd_listo_para_stg
+        lnd_listo_para_stg, creado_en
     ) VALUES %s
 """
 
+def procesar_hoja_manvert_jiffy(ws, cur, id_carga: int, logger: logging.Logger) -> dict:
+    cnt = {"leidas":0,"vacias":0,"secciones":0,"encabezados":0,"insertadas":0,"warnings":0}
+    buffer = []
+    BATCH = 200
 
-def procesar_hoja_manvert_jiffy(ws, cur, id_carga, logger):
-    cnt = {"leidas": 0, "vacias": 0, "secciones": 0, "encabezados": 0, "insertadas": 0, "warnings": 0}
-    
-    registros_a_insertar = []
-    fila_excel = 3
-    
-    for row in ws.iter_rows(min_row=4, values_only=True):
+    for idx, row in enumerate(ws.iter_rows(min_row=4, values_only=True), start=4):
         cnt["leidas"] += 1
-        fila_excel += 1
-        
-        lote_raw        = extraer_celda(row, ColManvert.LOTE)
-        codigo_raw      = extraer_celda(row, ColManvert.CODIGO)
-        nombre_raw      = extraer_celda(row, ColManvert.NOMBRE)
-        estado_lote_raw = extraer_celda(row, ColManvert.ESTADO)
-        fisico_raw      = extraer_celda(row, ColManvert.FISICO)
-        sistema_raw     = extraer_celda(row, ColManvert.SISTEMA)
-        diferencia_raw  = extraer_celda(row, ColManvert.DIFERENCIA)
-        observacion_raw = extraer_celda(row, ColManvert.OBSERVACION)
-        fecha_venc_raw  = extraer_celda(row, ColManvert.FECHA_VENC)
-        almacenaje_raw  = extraer_celda(row, ColManvert.ALMACENAJE)
-        
-        if es_fila_vacia_manvert(row):
+
+        lote  = extraer_celda(row, ColManvert.LOTE)
+        cod   = extraer_celda(row, ColManvert.CODIGO)
+        nom   = extraer_celda(row, ColManvert.NOMBRE)
+        est   = extraer_celda(row, ColManvert.ESTADO)
+        fis   = extraer_celda(row, ColManvert.FISICO)
+        sis   = extraer_celda(row, ColManvert.SISTEMA)
+        dif   = extraer_celda(row, ColManvert.DIFERENCIA)
+        obs   = extraer_celda(row, ColManvert.OBSERVACION)
+        fvenc = extraer_celda(row, ColManvert.FECHA_VENC)
+        alm   = extraer_celda(row, ColManvert.ALMACENAJE)
+
+        if es_fila_vacia(row, [ColManvert.CODIGO, ColManvert.NOMBRE,
+                                ColManvert.FISICO, ColManvert.SISTEMA]):
             cnt["vacias"] += 1
             continue
-            
-        if es_encabezado_columnas(codigo_raw):
+
+        if es_encabezado_columnas(cod):
             cnt["encabezados"] += 1
             continue
 
-        flags = calcular_flags_manvert(codigo_raw, nombre_raw, fisico_raw, sistema_raw, fecha_venc_raw, almacenaje_raw)
-        
-        registros_a_insertar.append((
-            id_carga, fila_excel,
-            lote_raw, codigo_raw, nombre_raw, estado_lote_raw,
-            fisico_raw, sistema_raw, diferencia_raw,
-            observacion_raw, fecha_venc_raw, almacenaje_raw,
-            False, False, # es_seccion, es_vacia
+        if est in ("N/A", "NA", ""):
+            est = None
+        elif est and es_numerico(est):
+            est = str(int(float(est)))
+
+        if fvenc in ("N/A", "NA", ""):
+            fvenc = None
+
+        flags = calcular_flags_manvert(cod, nom, fis, sis, fvenc, alm)
+        cod_limpio = limpiar_codigo(cod)
+
+        if not flags["lnd_sistema_numerico"] and fis:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-04: sistema vacío (código='{cod_limpio}')")
+        if not flags["lnd_fecha_venc_parseable"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx}: fecha_venc '{fvenc}' no parseable")
+        if flags["lnd_tiene_codigo"] and not flags["lnd_tiene_nombre"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-02: código sin nombre")
+        elif flags["lnd_tiene_nombre"] and not flags["lnd_tiene_codigo"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx} RV-01: nombre sin código")
+
+        buffer.append((
+            id_carga, idx, "Manvert_Jiffy",
+            lote, cod, nom, est, fis, sis, dif, obs, fvenc, alm,
+            False, False,
             flags["lnd_tiene_codigo"], flags["lnd_tiene_nombre"],
             flags["lnd_fisico_numerico"], flags["lnd_sistema_numerico"],
             flags["lnd_fecha_venc_parseable"], flags["lnd_almacenaje_numerico"],
-            flags["lnd_listo_para_stg"]
+            flags["lnd_listo_para_stg"], datetime.now()
         ))
-        
-    if registros_a_insertar:
-        psycopg2.extras.execute_values(cur, SQL_INSERT_MANVERT, registros_a_insertar)
-        cnt["insertadas"] += len(registros_a_insertar)
-        
+        cnt["insertadas"] += 1
+
+        if len(buffer) >= BATCH:
+            psycopg2.extras.execute_values(cur, SQL_INSERT_MANVERT, buffer)
+            buffer.clear()
+
+    if buffer:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_MANVERT, buffer)
+
     return cnt
+
+
 # ─────────────────────────────────────────────────────────────────────────────
-#  CHECKLIST PRE-CARGA  (Sección 8 del documento de reglas)
+#  PROCESAMIENTO: HOJA LISTA DE PRODUCTOS
+# ─────────────────────────────────────────────────────────────────────────────
+
+SQL_INSERT_LISTA_PRODUCTOS = """
+    INSERT INTO fertiliza_landing.lnd_lista_productos_raw (
+        id_carga, fila_excel, hoja_origen,
+        codigo_raw, descripcion_raw,
+        precio1_raw, precio2_raw, precio3_raw, existencia_raw,
+        lnd_tiene_codigo, lnd_tiene_descripcion,
+        lnd_precio1_numerico, lnd_existencia_numerica,
+        lnd_listo_para_stg, creado_en
+    ) VALUES %s
+"""
+
+def procesar_hoja_lista_productos(ws, cur, id_carga: int, logger: logging.Logger) -> dict:
+    cnt = {"leidas":0,"vacias":0,"secciones":0,"encabezados":0,"insertadas":0,"warnings":0}
+    buffer = []
+    BATCH = 200
+
+    for idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+        cnt["leidas"] += 1
+
+        cod   = extraer_celda(row, ColListaProductos.CODIGO)
+        desc  = extraer_celda(row, ColListaProductos.DESCRIPCION)
+        p1    = extraer_celda(row, ColListaProductos.PRECIO1)
+        p2    = extraer_celda(row, ColListaProductos.PRECIO2)
+        p3    = extraer_celda(row, ColListaProductos.PRECIO3)
+        exist = extraer_celda(row, ColListaProductos.EXISTENCIA)
+
+        if es_fila_vacia(row, [ColListaProductos.CODIGO, ColListaProductos.DESCRIPCION]):
+            cnt["vacias"] += 1
+            continue
+
+        if es_encabezado_columnas(cod):
+            cnt["encabezados"] += 1
+            continue
+
+        flags = calcular_flags_lista_productos(cod, desc, p1, exist)
+        cod_limpio = limpiar_codigo(cod)
+
+        if not flags["lnd_precio1_numerico"] or (p1 and float(p1 or 0) == 0):
+            if p1 == "0" or p1 is None:
+                cnt["warnings"] += 1
+                logger.debug(f"  F{idx}: precio en cero (código='{cod_limpio}')")
+
+        buffer.append((
+            id_carga, idx, "LISTA DE PRODUCTOS",
+            cod, desc, p1, p2, p3, exist,
+            flags["lnd_tiene_codigo"], flags["lnd_tiene_descripcion"],
+            flags["lnd_precio1_numerico"], flags["lnd_existencia_numerica"],
+            flags["lnd_listo_para_stg"], datetime.now()
+        ))
+        cnt["insertadas"] += 1
+
+        if len(buffer) >= BATCH:
+            psycopg2.extras.execute_values(cur, SQL_INSERT_LISTA_PRODUCTOS, buffer)
+            buffer.clear()
+
+    if buffer:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_LISTA_PRODUCTOS, buffer)
+
+    return cnt
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  PROCESAMIENTO: HOJA EJEMPLO DATOS KARDEX
+# ─────────────────────────────────────────────────────────────────────────────
+
+SQL_INSERT_KARDEX = """
+    INSERT INTO fertiliza_landing.lnd_kardex_raw (
+        id_carga, fila_excel, hoja_origen,
+        tipo_raw, fecha_raw, documento_raw, cliente_prov_raw,
+        costo_raw, entradas_raw, precio_raw, salidas_raw,
+        bodega_raw, cantidad_toma_raw,
+        lnd_tiene_tipo, lnd_fecha_parseable,
+        lnd_entradas_numericas, lnd_salidas_numericas,
+        lnd_tipo_reconocido, lnd_listo_para_stg, creado_en
+    ) VALUES %s
+"""
+
+def procesar_hoja_kardex(ws, cur, id_carga: int, logger: logging.Logger) -> dict:
+    cnt = {"leidas":0,"vacias":0,"secciones":0,"encabezados":0,"insertadas":0,"warnings":0}
+    buffer = []
+    BATCH = 200
+
+    for idx, row in enumerate(ws.iter_rows(min_row=2, values_only=True), start=2):
+        cnt["leidas"] += 1
+
+        tipo   = extraer_celda(row, ColKardex.TIPO)
+        fecha  = extraer_celda(row, ColKardex.FECHA)
+        doc    = extraer_celda(row, ColKardex.DOCUMENTO)
+        cli    = extraer_celda(row, ColKardex.CLIENTE_PROV)
+        costo  = extraer_celda(row, ColKardex.COSTO)
+        entr   = extraer_celda(row, ColKardex.ENTRADAS)
+        precio = extraer_celda(row, ColKardex.PRECIO)
+        sal    = extraer_celda(row, ColKardex.SALIDAS)
+        bodega = extraer_celda(row, ColKardex.BODEGA)
+        cant   = extraer_celda(row, ColKardex.CANTIDAD_TOMA)
+
+        if es_fila_vacia(row, [ColKardex.TIPO, ColKardex.FECHA]):
+            cnt["vacias"] += 1
+            continue
+
+        if tipo and tipo.strip().lower() == "tipo":
+            cnt["encabezados"] += 1
+            continue
+
+        doc = limpiar_codigo(doc) if doc else None
+        flags = calcular_flags_kardex(tipo, fecha, entr, sal)
+
+        if flags["lnd_tiene_tipo"] and not flags["lnd_tipo_reconocido"]:
+            cnt["warnings"] += 1
+            logger.warning(
+                f"  F{idx} RV-14: tipo de movimiento no reconocido: '{tipo}'"
+            )
+
+        if not flags["lnd_fecha_parseable"]:
+            cnt["warnings"] += 1
+            logger.warning(f"  F{idx}: fecha '{fecha}' no parseable")
+
+        buffer.append((
+            id_carga, idx, "EJEMPLO DATOS KARDEX",
+            tipo, fecha, doc, cli, costo, entr, precio, sal, bodega, cant,
+            flags["lnd_tiene_tipo"], flags["lnd_fecha_parseable"],
+            flags["lnd_entradas_numericas"], flags["lnd_salidas_numericas"],
+            flags["lnd_tipo_reconocido"], flags["lnd_listo_para_stg"],
+            datetime.now()
+        ))
+        cnt["insertadas"] += 1
+
+        if len(buffer) >= BATCH:
+            psycopg2.extras.execute_values(cur, SQL_INSERT_KARDEX, buffer)
+            buffer.clear()
+
+    if buffer:
+        psycopg2.extras.execute_values(cur, SQL_INSERT_KARDEX, buffer)
+
+    return cnt
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+#  CHECKLIST PRE-CARGA
 # ─────────────────────────────────────────────────────────────────────────────
 
 def checklist_pre_carga(wb, nombre_archivo: str,
                          logger: logging.Logger) -> Tuple[bool, list]:
-    """
-    Ejecuta el checklist pre-carga antes de procesar cualquier fila.
-    Retorna (continuar: bool, hojas_a_procesar: list).
-    """
     hojas_a_procesar = []
-    puede_continuar = True
+    procesados = set()
 
-    # Check 4: al menos una hoja conocida
     for nombre_hoja, tipo in HOJAS_CONOCIDAS.items():
-        if nombre_hoja in wb.sheetnames:
-            if tipo not in [t for _, t in hojas_a_procesar]:
-                hojas_a_procesar.append((nombre_hoja, tipo))
+        if nombre_hoja in wb.sheetnames and tipo not in procesados:
+            hojas_a_procesar.append((nombre_hoja, tipo))
+            procesados.add(tipo)
 
     if not hojas_a_procesar:
         logger.warning(
-            f"  [{nombre_archivo}] CHECK-4 FAIL: ninguna hoja conocida encontrada. "
-            f"Hojas disponibles: {wb.sheetnames}"
+            f"  [{nombre_archivo}] CHECK-4 FAIL: ninguna hoja conocida. "
+            f"Disponibles: {wb.sheetnames}"
         )
-        puede_continuar = False
+        return False, []
 
-    # Check 5: hoja Fertilisa tiene al menos una sección conocida
-    if "Fertilisa" in wb.sheetnames:
-        ws = wb["Fertilisa"]
-        secciones_encontradas = 0
-        for row in ws.iter_rows(values_only=True):
-            col_b = celda_a_str(row[ColFertilisa.CODIGO] if len(row) > ColFertilisa.CODIGO else None)
-            if detectar_seccion_fertilisa(col_b):
-                secciones_encontradas += 1
-        if secciones_encontradas == 0:
-            logger.warning(
-                f"  [{nombre_archivo}] CHECK-5 WARNING: "
-                f"no se encontraron filas de sección en 'Fertilisa'. "
-                f"Posible cambio de formato en el archivo."
-            )
-
-    # Check 6: al menos 80% de filas tienen código no vacío
-    if "Fertilisa" in wb.sheetnames:
-        ws = wb["Fertilisa"]
-        total_no_vacias = 0
-        con_codigo = 0
-        for row in ws.iter_rows(values_only=True):
-            col_b = celda_a_str(row[ColFertilisa.CODIGO] if len(row) > ColFertilisa.CODIGO else None)
-            if not es_fila_vacia_fertilisa(row) and not es_encabezado_columnas(col_b):
-                nombre_sec = detectar_seccion_fertilisa(col_b)
-                if not nombre_sec:
-                    total_no_vacias += 1
-                    if limpiar_codigo(col_b):
-                        con_codigo += 1
-        if total_no_vacias > 0:
-            pct = (con_codigo / total_no_vacias) * 100
-            if pct < 80:
-                logger.warning(
-                    f"  [{nombre_archivo}] CHECK-6 WARNING: "
-                    f"solo {pct:.1f}% de filas tienen código. "
-                    f"Posible archivo corrupto o mal exportado."
-                )
-            else:
-                logger.info(
-                    f"  [{nombre_archivo}] CHECK-6 OK: "
-                    f"{pct:.1f}% de filas tienen código."
-                )
-
-    # Reportar hojas desconocidas (RB-04)
     for hoja in wb.sheetnames:
         if hoja not in HOJAS_CONOCIDAS:
             logger.warning(f"  [{nombre_archivo}] Hoja desconocida ignorada: '{hoja}'")
 
-    # Reportar hojas conocidas ausentes (RB-05)
-    hojas_procesadas_nombres = {h for h, _ in hojas_a_procesar}
-    for nombre_esperado in ["Fertilisa", "Manvert, Jiffy"]:
-        if nombre_esperado not in wb.sheetnames and nombre_esperado not in hojas_procesadas_nombres:
+    for nombre_esperado in HOJAS_CONOCIDAS:
+        if nombre_esperado not in wb.sheetnames:
             logger.info(
                 f"  [{nombre_archivo}] Hoja '{nombre_esperado}' no encontrada. "
-                f"Se continúa con las hojas disponibles."
+                f"Se continúa con las disponibles."
             )
 
-    return puede_continuar, hojas_a_procesar
+    if "Fertilisa" in wb.sheetnames:
+        ws = wb["Fertilisa"]
+        total = con_cod = 0
+        for row in ws.iter_rows(min_row=4, values_only=True):
+            col_b = extraer_celda(row, ColFertilisa.CODIGO)
+            if (not es_fila_vacia(row, [ColFertilisa.CODIGO, ColFertilisa.NOMBRE,
+                                        ColFertilisa.FISICO, ColFertilisa.SISTEMA])
+                    and not es_encabezado_columnas(col_b)
+                    and not detectar_seccion_fertilisa(col_b)):
+                total += 1
+                if limpiar_codigo(col_b):
+                    con_cod += 1
+        if total > 0:
+            pct = (con_cod / total) * 100
+            if pct < 80:
+                logger.warning(f"  [{nombre_archivo}] CHECK-6 WARNING: {pct:.1f}% con código")
+            else:
+                logger.info(f"  [{nombre_archivo}] CHECK-6 OK: {pct:.1f}% de filas tienen código.")
+
+    return True, hojas_a_procesar
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  PROCESAMIENTO DE UN ARCHIVO XLSX
+#  PROCESAMIENTO DE UN ARCHIVO
 # ─────────────────────────────────────────────────────────────────────────────
 
-def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
-                     usuario: str) -> bool:
-    """
-    Procesa un único archivo .xlsx completo.
-    Retorna True si exitoso, False si abortado o fallido.
-    """
+PROCESADORES = {
+    "fertilisa":       procesar_hoja_fertilisa,
+    "manvert_jiffy":   procesar_hoja_manvert_jiffy,
+    "lista_productos": procesar_hoja_lista_productos,
+    "kardex":          procesar_hoja_kardex,
+}
+
+def procesar_archivo(ruta: Path, conn, logger: logging.Logger, usuario: str) -> bool:
     logger.info(f"{'─' * 60}")
     logger.info(f"Archivo: {ruta.name}")
 
@@ -682,19 +788,16 @@ def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
 
     cur = conn.cursor()
 
-    # ── RB-01: verificar duplicado ────────────────────────────────────────────
     if verificar_duplicado(cur, hash_md5, logger):
         cur.close()
         return False
 
-    # ── Registrar en lnd_archivo_log ──────────────────────────────────────────
     id_archivo = registrar_archivo_log(
         cur, ruta.name, str(ruta.resolve()), hash_md5, tamanio, usuario
     )
     conn.commit()
     logger.info(f"  Registrado en lnd_archivo_log (id={id_archivo})")
 
-    # ── Abrir el workbook con data_only=True (resuelve fórmulas) ─────────────
     try:
         wb = openpyxl.load_workbook(ruta, read_only=False, data_only=True)
     except Exception as e:
@@ -704,24 +807,20 @@ def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
         cur.close()
         return False
 
-    # ── Checklist pre-carga ───────────────────────────────────────────────────
     puede_continuar, hojas_a_procesar = checklist_pre_carga(wb, ruta.name, logger)
     if not puede_continuar:
         actualizar_archivo_log(cur, id_archivo, "Error", 0, 0,
-                                "Checklist pre-carga fallido: sin hojas conocidas")
+                               "Checklist pre-carga fallido: hojas no reconocidas")
         conn.commit()
         wb.close()
         cur.close()
         return False
 
-    # ── Inferir período de los datos ──────────────────────────────────────────
     periodo = datetime.now().strftime("%Y-%m")
-
     total_filas_global  = 0
     total_insert_global = 0
     alguna_ok           = False
 
-    # ── Procesar cada hoja conocida ───────────────────────────────────────────
     for nombre_hoja, tipo_hoja in hojas_a_procesar:
         logger.info(f"  → Procesando hoja '{nombre_hoja}'")
         ws = wb[nombre_hoja]
@@ -730,15 +829,13 @@ def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
         conn.commit()
 
         try:
-            if tipo_hoja == "fertilisa":
-                cnt = procesar_hoja_fertilisa(ws, cur, id_carga, logger)
-            else:
-                cnt = procesar_hoja_manvert_jiffy(ws, cur, id_carga, logger)
+            procesador_func = PROCESADORES[tipo_hoja]
+            cnt = procesador_func(ws, cur, id_carga, logger)
 
             actualizar_carga(
                 cur, id_carga, "Completado",
                 cnt["leidas"], cnt["vacias"],
-                cnt["secciones"], cnt["insertadas"]
+                cnt.get("secciones", 0), cnt["insertadas"]
             )
             conn.commit()
 
@@ -748,7 +845,7 @@ def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
 
             logger.info(
                 f"    ✓ Leídas:{cnt['leidas']} | Vacías:{cnt['vacias']} | "
-                f"Secciones:{cnt['secciones']} | Encabezados:{cnt['encabezados']} | "
+                f"Secciones:{cnt.get('secciones', 0)} | Encabezados:{cnt.get('encabezados', 0)} | "
                 f"Insertadas:{cnt['insertadas']} | Warnings:{cnt['warnings']}"
             )
 
@@ -779,19 +876,14 @@ def procesar_archivo(ruta: Path, conn, logger: logging.Logger,
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-#  PUNTO DE ENTRADA  (RB-08)
+#  PUNTO DE ENTRADA
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="ETL Landing — Fertilisa S.A. v2.0"
-    )
-    parser.add_argument("--input-dir", required=True,
-                        help="Carpeta con los archivos .xlsx a procesar")
-    parser.add_argument("--log-dir", default="logs",
-                        help="Carpeta para archivos .log (default: ./logs)")
-    parser.add_argument("--usuario", default=os.getenv("USER", "etl_proceso"),
-                        help="Nombre del operario o proceso (se registra en BD)")
+    parser = argparse.ArgumentParser(description="ETL Landing — Fertilisa S.A. v3.0")
+    parser.add_argument("--input-dir", required=True, help="Carpeta con los archivos .xlsx")
+    parser.add_argument("--log-dir", default="logs", help="Carpeta para .log")
+    parser.add_argument("--usuario", default=os.getenv("USER", "etl_proceso"), help="Usuario ejecutor")
     args = parser.parse_args()
 
     logger = configurar_logging(args.log_dir)
@@ -802,7 +894,6 @@ def main():
     logger.info(f"  Usuario        : {args.usuario}")
     logger.info("=" * 60)
 
-    # Check 2: validar carpeta de entrada
     carpeta = Path(args.input_dir)
     if not carpeta.exists() or not carpeta.is_dir():
         logger.critical(f"La carpeta de entrada no existe: {args.input_dir}")
@@ -814,16 +905,14 @@ def main():
         sys.exit(0)
 
     logger.info(f"Archivos encontrados: {len(archivos)}")
-    for a in archivos:
-        logger.info(f"  - {a.name}")
-
-    # Check 3: conectar a BD (falla duro si no hay conexión)
     conn = conectar_db(logger)
 
     resultados = {"exitosos": 0, "duplicados": 0, "errores": 0}
 
-    # RB-03: procesar todos los archivos; si uno falla, continuar con el siguiente
     for ruta_archivo in archivos:
+        if ruta_archivo.name.startswith("~$"):
+            continue
+            
         try:
             ok = procesar_archivo(ruta_archivo, conn, logger, args.usuario)
             if ok:
@@ -841,14 +930,13 @@ def main():
     conn.close()
 
     logger.info("=" * 60)
-    logger.info("RESUMEN")
+    logger.info("RESUMEN GENERAL")
     logger.info(f"  Exitosos   : {resultados['exitosos']}")
     logger.info(f"  Duplicados : {resultados['duplicados']}")
     logger.info(f"  Errores    : {resultados['errores']}")
     logger.info("=" * 60)
 
     sys.exit(0 if resultados["errores"] == 0 else 1)
-
 
 if __name__ == "__main__":
     main()
