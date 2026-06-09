@@ -1,0 +1,258 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.vaKgzCHLoqQ=.ODkt6SqFTyh/vGPrVWXX1Q==.KQ6bpvw1ky5wNQ5jF7lJtBdnu3HMYd8oEeuP6KxKAKKWDTiALdoHIpGzBIlQPjJkXTil/e+EP5F0DzihBz69M9mHcE/ITOhrZ93xCJqhp70=.hVRX3AGLfi5lDUR/jXsg2nJ2+17O/ZgVhWwELwJDIAg=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQBBiuXavQA1q6oGYiAgNi2POWsQ3zPgweFBDFOYZ4vp4bJ/Xs5HLd900NadrpL1kT0xKFfTohZ3Js000H3uAzuzKL/3AK4lEn7Llr9Ak1LIwDebFjk4EV1xr3T6l0SKyAPJR5KPyGZY+RVUqElUEa/HeGkYXfiWQSrMUteI5ky1lRRekiK4+E/bLbnpPQdM6ExpXPKBguIIMGox0cJTxNvRaCTMgu+AszZtKDvHSNXysz07tfVu3dyEGLnF51d+PI0WvrU6PBrjsn5Cn0DYirRz4YZVtDNVnGXsLbLKkm6r3rK1m3Bt9CTaInPDCnSJi4cXEj6CnHO0aG4HC6g0nXzq" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-07T11:27:18.0518481Z" ComplexityLevel="Beginner" Signature="1Mi/vAJgBmyGlhsQBVpT09StbcbwBYleQekJB01LUFI=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="dbo.SALIDAS 1" Left="335" Top="325" Width="1648" Height="811" IsMinimized="false" ActiveActionIndex="2" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="BODEGA" Width="283" />
+                    <MetaColumn OriginalName="ob" Width="421" />
+                    <MetaColumn OriginalName="Tipo_Movimiento" Width="188" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="885" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Importacion Entradas - Salidas" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="dbo.SALIDAS" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_comp" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="documento" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="fecha" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="serie" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="ob" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="Cantidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="Precio" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="Tipo" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="Descripcion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="CodigoProducto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="BODEGA" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="Tipo_Movimiento" ColumnType="Text" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_comp" IsExpression="false" DataType="Number" />
+                        <Item Name="documento" IsExpression="false" DataType="Number" />
+                        <Item Name="fecha" IsExpression="false" DataType="Text" />
+                        <Item Name="serie" IsExpression="false" DataType="Text" />
+                        <Item Name="generada" IsExpression="false" DataType="Text" />
+                        <Item Name="ob" IsExpression="false" DataType="Text" />
+                        <Item Name="Cantidad" IsExpression="false" DataType="Number" />
+                        <Item Name="Precio" IsExpression="false" DataType="Number" />
+                        <Item Name="Tipo" IsExpression="false" DataType="Text" />
+                        <Item Name="Descripcion" IsExpression="false" DataType="Text" />
+                        <Item Name="CodigoProducto" IsExpression="false" DataType="Text" />
+                        <Item Name="Impresa" IsExpression="false" DataType="Text" />
+                        <Item Name="BODEGA" IsExpression="false" DataType="Text" />
+                        <Item Name="PROYECTO" IsExpression="false" DataType="Text" />
+                        <Item Name="IndiceLinea" IsExpression="false" DataType="Number" />
+                        <Item Name="Tipo_Movimiento" IsExpression="false" DataType="Text" />
+                        <Item Name="Autorizo" IsExpression="false" DataType="Text" />
+                        <Item Name="INFORMACION" IsExpression="false" DataType="Text" />
+                        <Item Name="LineaSalida" IsExpression="false" DataType="Number" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <ConvertDataTypesAction Conversion="TextToDate" FailureOption="KeepOriginal">
+                  <ColumnNames>
+                    <Item>fecha</Item>
+                  </ColumnNames>
+                  <Format Value="dd/MM/yyyy" Type="Text" />
+                </ConvertDataTypesAction>
+                <ExpressionFilterAction IsDisabled="true" Condition="[fecha] &gt;= #2025-01-01 and [fecha] &lt; #2026-05-08" />
+                <LookupAction LookupTableName="Table 1" SecondTableExists="true" ColumnName="fecha" LookupColumnName="Formatted date" ReturnColumnName="Date as number" CreateNewColumn="false" ValueNotFoundOption="KeepOriginal" />
+                <SelectionFilterAction IsDisabled="true" ColumnName="BODEGA" RemoveSelectedValues="false">
+                  <Cells>
+                    <C T="s" V="1-BODEGA DAVID*" />
+                  </Cells>
+                </SelectionFilterAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <Columns>
+                    <NameExpressionPair Name="id_tipo_mov">
+                      <Expression Value="if([Cantidad] &gt; 0, 1, 2)" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <ExportDatasetAction AutoStatus="true" Mode="Local" FileExistsOption="Overwrite" EncryptColumns="false" AppendMode="AddNewColumns" ExportMode="CreateOrOverwrite">
+                  <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\TempSalidas.dset" Type="Path" />
+                </ExportDatasetAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="Entradas" Left="1213" Top="202" Width="948" Height="822" IsMinimized="false" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="BODEGA" Width="283" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="885" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Importacion Entradas - Salidas" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="dbo.DETALLE_ENTRADA" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_comp" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_producto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="cod_entrada" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="id_entrada" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="cantidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="des" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="BODEGA" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="VENCE" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="FACTURANUMERO" ColumnType="Number" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_comp" IsExpression="false" DataType="Number" />
+                        <Item Name="id_producto" IsExpression="false" DataType="Text" />
+                        <Item Name="cod_entrada" IsExpression="false" DataType="Text" />
+                        <Item Name="id_entrada" IsExpression="false" DataType="Number" />
+                        <Item Name="cantidad" IsExpression="false" DataType="Number" />
+                        <Item Name="costo" IsExpression="false" DataType="Number" />
+                        <Item Name="total" IsExpression="false" DataType="Number" />
+                        <Item Name="tipo" IsExpression="false" DataType="Text" />
+                        <Item Name="des" IsExpression="false" DataType="Text" />
+                        <Item Name="descuento" IsExpression="false" DataType="Number" />
+                        <Item Name="impuesto" IsExpression="false" DataType="Number" />
+                        <Item Name="ttotal" IsExpression="false" DataType="Number" />
+                        <Item Name="BODEGA" IsExpression="false" DataType="Text" />
+                        <Item Name="VENCE" IsExpression="false" DataType="Text" />
+                        <Item Name="FACTURANUMERO" IsExpression="false" DataType="Number" />
+                        <Item Name="INDICELINEA" IsExpression="false" DataType="Number" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <LookupAction LookupTableName="Imported table 1" SecondTableExists="true" ColumnName="id_entrada" LookupColumnName="codigo" ReturnColumnName="fecha" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <KeepRemoveColumnsAction Mode="Remove" FailIfColumnsNotFound="true">
+                  <ColumnNames>
+                    <Item>VENCE</Item>
+                    <Item>FACTURANUMERO</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <LookupAction LookupTableName="Table 1" SecondTableExists="true" ColumnName="fecha" LookupColumnName="Formatted date" ReturnColumnName="Date as number" CreateNewColumn="false" ValueNotFoundOption="KeepOriginal" />
+                <ExpressionFilterAction IsDisabled="true" Condition="[fecha] &gt;= #2025-01-01 and [fecha] &lt; #2026-05-08" />
+                <SortAction>
+                  <SortColumns>
+                    <SortColumn ColumnName="fecha" SortOrder="Ascending" />
+                  </SortColumns>
+                </SortAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <Columns>
+                    <NameExpressionPair Name="id_tipo_mov">
+                      <Expression Value="1" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <ExportDatasetAction AutoStatus="true" Mode="Local" FileExistsOption="Overwrite" EncryptColumns="false" AppendMode="AddNewColumns" ExportMode="CreateOrOverwrite">
+                  <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\TempEntradas.dset" Type="Path" />
+                </ExportDatasetAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="Imported table 1" Left="297" Top="113" Width="341" Height="609" IsMinimized="true" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="885" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Importacion Entradas - Salidas" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="dbo.ENTRADA" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_comp" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="factura" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="provedor" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="USUARIO" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="FACTURANUMERO" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="OBSERVACIONES" ColumnType="Text" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_comp" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo" IsExpression="false" DataType="Number" />
+                        <Item Name="factura" IsExpression="false" DataType="Text" />
+                        <Item Name="id_proovedor" IsExpression="false" DataType="Text" />
+                        <Item Name="fecha" IsExpression="false" DataType="Text" />
+                        <Item Name="total" IsExpression="false" DataType="Number" />
+                        <Item Name="vence" IsExpression="false" DataType="Text" />
+                        <Item Name="cancelada" IsExpression="false" DataType="Text" />
+                        <Item Name="saldo" IsExpression="false" DataType="Number" />
+                        <Item Name="abonos" IsExpression="false" DataType="Number" />
+                        <Item Name="provedor" IsExpression="false" DataType="Text" />
+                        <Item Name="impuesto" IsExpression="false" DataType="Number" />
+                        <Item Name="subtotal" IsExpression="false" DataType="Number" />
+                        <Item Name="fpago" IsExpression="false" DataType="Text" />
+                        <Item Name="descuento" IsExpression="false" DataType="Number" />
+                        <Item Name="codmoneda" IsExpression="false" DataType="Text" />
+                        <Item Name="moneda" IsExpression="false" DataType="Text" />
+                        <Item Name="TIPOCAMBIO" IsExpression="false" DataType="Number" />
+                        <Item Name="USUARIO" IsExpression="false" DataType="Text" />
+                        <Item Name="FACTURANUMERO" IsExpression="false" DataType="Number" />
+                        <Item Name="ORDENCOMPRA" IsExpression="false" DataType="Text" />
+                        <Item Name="OBSERVACIONES" IsExpression="false" DataType="Text" />
+                        <Item Name="TRANSPORTE" IsExpression="false" DataType="Number" />
+                        <Item Name="PROYECTO" IsExpression="false" DataType="Text" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <ConvertDataTypesAction Conversion="TextToDate" FailureOption="KeepOriginal">
+                  <ColumnNames>
+                    <Item>fecha</Item>
+                  </ColumnNames>
+                  <Format Value="dd/MM/yyyy" Type="Text" />
+                </ConvertDataTypesAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="Table 1" Left="587" Top="47" Width="412" Height="300" IsMinimized="false" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <CalendarAction DateFormat="DMYY">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="Date_x0020_as_x0020_number" Format="DateDDMMMYYYY" FormatOrigin="Autodetected" />
+                  </MetaColumns>
+                  <FromDate Type="Date">
+                    <Date Value="2025-01-01" Type="Date" />
+                  </FromDate>
+                  <ToDate Type="Date">
+                    <Date Value="2026-05-12" Type="Date" />
+                  </ToDate>
+                  <Columns>
+                    <Item>DateAsNumber</Item>
+                    <Item>FormattedDate</Item>
+                  </Columns>
+                </CalendarAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>

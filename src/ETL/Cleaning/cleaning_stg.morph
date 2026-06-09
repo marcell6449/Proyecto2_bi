@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.DIhrzepmkC0=.vKO/cmPFiWD5AqyaFlMyRA==.U2HKyCedOYT9G9QdWy3QsnUb0nRBn1mR788xgitfY0V2BoXY87ZRtn/IlrKbrHRE+HrwkrNYD9I5Xo0ev2nPtwcqx/Dx+ZTcoXe4EqoznSs=.nq7gOGM5hBviAuPT7xEaoHlpkEhiCNgamqh/eQeDjRI=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQB5BkFsJtI/uS0pZP4/6gluCwNlHVUWqCfyPOZwkUiU4e1DPdIlQ4ys3T54WEPd6DaKX98rkS+IevXaLlJ5Cc07wDa+jtkVpyoXUSr/PyGeI3yCQvtdR6amOvzmvX9tkvVDmCdNDIzAhaw7WzwRiD7A94NwC510B9wsD6gswDLUoSbnbi/oPGXta283zro7P8qRxGYrgqFGyd6cud2a1CGBdilb7oyatNbH4+CY38EWtZz2u1MlkPXnhPDfgDpaw6mwAyJQRYN4C1bPrs63GSjwqpwFc/aP2Qh24OYKlHxzJPa9KEIRDGZjrbipMt6s4M407NxeDVXhPlpXORg5Wdi8" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-06T12:09:26.1392390Z" ComplexityLevel="Beginner" Signature="3MKYD7Nh4p8PZDVp4GufINzfDVHsqM+Iv6RKgA0zh70=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="fertiliza_landing.lnd_carga 1" Left="188" Top="562" Width="1461" Height="300" IsMinimized="false" ActiveActionIndex="1" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="fin_carga" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                    <MetaColumn OriginalName="inicio_carga" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_landing.lnd_carga" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_carga" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_archivo_log" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="descripcion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="periodo_datos" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="hoja_procesada" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="filas_leidas" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="filas_vacias" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="filas_seccion" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="filas_insertadas" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="estado" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="mensaje_error" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="ejecutado_por" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="inicio_carga" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="fin_carga" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.stg_carga" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_carga" Name2="id_carga" />
+                    <NamePair Name1="hoja_procesada" Name2="hoja" />
+                    <NamePair Name1="filas_leidas" Name2="total_filas_raw" />
+                    <NamePair Name1="filas_vacias" Name2="filas_rechazadas" />
+                    <NamePair Name1="filas_insertadas" Name2="filas_validas" />
+                    <NamePair Name1="estado" Name2="estado" />
+                    <NamePair Name1="mensaje_error" Name2="mensaje_error" />
+                    <NamePair Name1="ejecutado_por" Name2="usuario_carga" />
+                    <NamePair Name1="inicio_carga" Name2="inicio_carga" />
+                    <NamePair Name1="fin_carga" Name2="fin_carga" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_landing.lnd_fertilisa_raw 1" Left="120" Top="90" Width="1377" Height="816" IsMinimized="false" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="nombre_limpio" Width="307" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="2097" WindowHeight="934" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_landing.v_fertilisa_para_stg" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_lnd_fert" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_carga" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="periodo_datos" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="codigo_limpio" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre_limpio" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fisico_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="sistema_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="diferencia_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="observacion_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="categoria_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fila_excel" ColumnType="Number" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <ConvertDataTypesAction Conversion="TextToNumber" DecimalSeparator="Point" ThousandSeparator="Default" FailureOption="KeepOriginal">
+                  <ColumnNames>
+                    <Item>id_lnd_fert</Item>
+                    <Item>id_carga</Item>
+                    <Item>fisico_raw</Item>
+                    <Item>sistema_raw</Item>
+                    <Item>diferencia_raw</Item>
+                  </ColumnNames>
+                </ConvertDataTypesAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="error_column" Width="231" />
+                  </MetaColumns>
+                  <Columns>
+                    <NameExpressionPair Name="error_column">
+                      <Expression Value="if(IsEmpty([codigo_limpio]),&#xD;&#xA;   &quot;ERROR RV-01&quot;,&#xD;&#xA;if([fisico_raw] &lt; 0,&#xD;&#xA;   &quot;ERROR RV-03:&quot;,&#xD;&#xA;if(IsEmpty([nombre_limpio]),&#xD;&#xA;   &quot;WARNING RV-02&quot;,&#xD;&#xA;if(IsEmpty([sistema_raw]),&#xD;&#xA;   &quot;WARNING RV-04&quot;,&#xD;&#xA;if(abs(([fisico_raw]-[sistema_raw])- [diferencia_raw]) &gt; 0.01,&#xD;&#xA;   &quot;WARNING RV-05&quot;,&#xD;&#xA;   &quot;OK&quot;&#xD;&#xA;)))))" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <ReplaceColumnsAction>
+                  <Columns>
+                    <NameExpressionPair Name="sistema_raw">
+                      <Expression Value="if(isempty([sistema_raw]), 0, [sistema_raw])" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="fisico_raw">
+                      <Expression Value="if(isempty([fisico_raw]), 0, [fisico_raw])" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                </ReplaceColumnsAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.stg_inventario_raw" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_lnd_fert" Name2="id_stg_inv" />
+                    <NamePair Name1="id_carga" Name2="id_carga" />
+                    <NamePair Name1="codigo_limpio" Name2="codigo_raw" />
+                    <NamePair Name1="nombre_limpio" Name2="nombre_raw" />
+                    <NamePair Name1="fisico_raw" Name2="fisico_raw" />
+                    <NamePair Name1="sistema_raw" Name2="sistema_raw" />
+                    <NamePair Name1="diferencia_raw" Name2="diferencia_raw" />
+                    <NamePair Name1="observacion_raw" Name2="observacion_raw" />
+                    <NamePair Name1="categoria_raw" Name2="categoria_raw" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="Table 1" Left="634" Top="234" Width="1497" Height="625" IsMinimized="true" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="nombre_limpio" Width="307" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="2097" WindowHeight="934" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_landing.v_manvert_jiffy_para_stg" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_lnd_mj" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_carga" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="periodo_datos" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="lote_limpio" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="codigo_limpio" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre_limpio" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="estado_lote_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fisico_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="sistema_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="diferencia_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="observacion_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha_venc_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="almacenaje_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fila_excel" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="lnd_fecha_venc_parseable" ColumnType="Boolean" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_lnd_fert" IsExpression="false" DataType="Number" />
+                        <Item Name="id_carga" IsExpression="false" DataType="Number" />
+                        <Item Name="periodo_datos" IsExpression="false" DataType="Text" />
+                        <Item Name="codigo_limpio" IsExpression="false" DataType="Text" />
+                        <Item Name="nombre_limpio" IsExpression="false" DataType="Text" />
+                        <Item Name="fisico_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="sistema_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="diferencia_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="observacion_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="categoria_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="fila_excel" IsExpression="false" DataType="Number" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <ConvertDataTypesAction Conversion="TextToNumber" DecimalSeparator="Point" ThousandSeparator="Default" FailureOption="KeepOriginal">
+                  <ColumnNames>
+                    <Item>id_lnd_mj</Item>
+                    <Item>id_carga</Item>
+                    <Item>codigo_limpio</Item>
+                    <Item>estado_lote_raw</Item>
+                    <Item>fisico_raw</Item>
+                    <Item>sistema_raw</Item>
+                    <Item>diferencia_raw</Item>
+                    <Item>almacenaje_raw</Item>
+                  </ColumnNames>
+                </ConvertDataTypesAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="error_column" Width="231" />
+                  </MetaColumns>
+                  <Columns>
+                    <NameExpressionPair Name="error_column">
+                      <Expression Value="if(IsEmpty([codigo_limpio]),&#xD;&#xA;   &quot;ERROR RV-01&quot;,&#xD;&#xA;if([fisico_raw] &lt; 0,&#xD;&#xA;   &quot;ERROR RV-03:&quot;,&#xD;&#xA;if(IsEmpty([nombre_limpio]),&#xD;&#xA;   &quot;WARNING RV-02&quot;,&#xD;&#xA;if(IsEmpty([sistema_raw]),&#xD;&#xA;   &quot;WARNING RV-04&quot;,&#xD;&#xA;if(abs(([fisico_raw]-[sistema_raw])- [diferencia_raw]) &gt; 0.01,&#xD;&#xA;   &quot;WARNING RV-05&quot;,&#xD;&#xA;   &quot;OK&quot;&#xD;&#xA;)))))" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <ReplaceColumnsAction>
+                  <Columns>
+                    <NameExpressionPair Name="sistema_raw">
+                      <Expression Value="if(isempty([sistema_raw]), 0, [sistema_raw])" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="fisico_raw">
+                      <Expression Value="if(isempty([fisico_raw]), 0, [fisico_raw])" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                </ReplaceColumnsAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.stg_manvert_jiffy_raw" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_lnd_mj" Name2="id_stg_mj" />
+                    <NamePair Name1="id_carga" Name2="id_carga" />
+                    <NamePair Name1="lote_limpio" Name2="lote_raw" />
+                    <NamePair Name1="codigo_limpio" Name2="codigo_raw" />
+                    <NamePair Name1="nombre_limpio" Name2="nombre_raw" />
+                    <NamePair Name1="estado_lote_raw" Name2="estado_lote_raw" />
+                    <NamePair Name1="fisico_raw" Name2="fisico_raw" />
+                    <NamePair Name1="sistema_raw" Name2="sistema_raw" />
+                    <NamePair Name1="diferencia_raw" Name2="diferencia_raw" />
+                    <NamePair Name1="observacion_raw" Name2="observacion_raw" />
+                    <NamePair Name1="fecha_venc_raw" Name2="fecha_venc_raw" />
+                    <NamePair Name1="almacenaje_raw" Name2="almacenaje_raw" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>

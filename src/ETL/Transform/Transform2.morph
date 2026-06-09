@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.jbKLgYtKlO8=.EXSktcONB/d4C7Jh1tvjLw==.3e0Xj5Y4Z3vBE6Lx7NAkrULxYboJ8LP/yrHj5HDc/R6mUmamo+EbVuO6Du0HijB1adDSaRuLDGkRU1eJXuWW3nkTnEitHm7B0wFBioP/d2o=.M8gQk93EcRnNuVtbgtpBMdn6gFyPU2rdC4XGUKtecd0=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQAZhpIJEJWb+qsmSsM51UDJktVzJZOr4m7ryHpfEQM4LeCMD26TXR1NbLujdIZgMyfZjILZ9XMW2FlqqdPP9Khyar0IzZsEb8xQTmckUVNUznQsUQKD2MRbbi2SBCdipv1AG+MEsTcBAZIu0c+znlWV9t99YwSgZ0J4t5C9I3z5Eu0qEdMf6Rt2gpQEOeQ4A9oZ6mllnFm0fYTgyl8zQzKxy6oYaZ1kA4GXXFYnbZot+nm91JoMQx3LmlR4sSbiNyDdecExdd/TZXKfPIItMzatJ/kO2A9FJVnisfAQZBZdN+5MK9PRbyFSqJNhSH9fWkFqGEa5ZQ//Zw8BgT7iHnC+" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-06T15:22:00.7191273Z" ComplexityLevel="Beginner" Signature="QFbMeyEVxQBtmjHXc82jYsnG5+4k8iSueSZ+Y7hC29c=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="fertiliza_oltp.categoria_producto 1" Left="14" Top="697" Width="500" Height="294" IsMinimized="false" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                    <MetaColumn OriginalName="modificado_en" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.categoria_producto" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_categoria" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_categoria" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="tipo_producto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="descripcion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="activo" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="modificado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.marca_proveedor 1" Left="4" Top="57" Width="500" Height="300" IsMinimized="false" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                    <MetaColumn OriginalName="modificado_en" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.marca_proveedor" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_marca" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="nombre_marca" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="pais_origen" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="tipo_proveedor" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="contacto_nombre" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="contacto_email" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="activo" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="modificado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.unidad_medida 1" Left="0" Top="369" Width="500" Height="300" IsMinimized="false" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" Format="DateDDMMMYYYYHMMSSAMPM" FormatOrigin="Autodetected" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.unidad_medida" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_unidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="descripcion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="activo" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="tempTransform.dset" Left="708" Top="209" Width="1064" Height="496" IsMinimized="false" ActiveActionIndex="5" ViewMode="Table">
+              <Actions>
+                <ImportDatasetAction AutoStatus="true" Mode="Local" ImportMode="Data" LoadAllColumns="true">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_procesado" />
+                    <MetaColumn OriginalName="nombre_raw" Width="354" />
+                  </MetaColumns>
+                  <InputFileDefinition Mode="Single">
+                    <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\tempTransform.dset" Type="Path" />
+                  </InputFileDefinition>
+                </ImportDatasetAction>
+                <KeepRemoveColumnsAction Mode="Keep">
+                  <ColumnNames>
+                    <Item>id_stg_inv</Item>
+                    <Item>codigo_raw</Item>
+                    <Item>nombre_raw</Item>
+                    <Item>categoria_jerarquizada</Item>
+                    <Item>marca</Item>
+                    <Item>unidad</Item>
+                    <Item>presentacion</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <LookupAction LookupTableName="fertiliza_oltp.categoria_producto 1" SecondTableExists="true" ColumnName="categoria_jerarquizada" LookupColumnName="nombre" ReturnColumnName="id_categoria" CreateNewColumn="true" ValueNotFoundOption="KeepOriginal" />
+                <LookupAction LookupTableName="fertiliza_oltp.marca_proveedor 1" SecondTableExists="true" ColumnName="marca" LookupColumnName="nombre_marca" ReturnColumnName="id_marca" CreateNewColumn="true" ValueNotFoundOption="KeepOriginal" />
+                <LookupAction LookupTableName="fertiliza_oltp.unidad_medida 1" SecondTableExists="true" ColumnName="unidad" LookupColumnName="codigo" ReturnColumnName="id_unidad" CreateNewColumn="true" ValueNotFoundOption="KeepOriginal" />
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.producto" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_stg_inv" Name2="id_producto" />
+                    <NamePair Name1="codigo_raw" Name2="codigo_producto" />
+                    <NamePair Name1="nombre_raw" Name2="nombre" />
+                    <NamePair Name1="presentacion" Name2="presentacion" />
+                    <NamePair Name1="id_categoria" Name2="id_categoria" />
+                    <NamePair Name1="id_marca" Name2="id_marca" />
+                    <NamePair Name1="id_unidad" Name2="id_unidad" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>

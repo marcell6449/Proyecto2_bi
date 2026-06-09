@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.H0mLY7+Ccsc=.JdTxamB7y8ZsKw18U6953g==.ILlkSWFy94GbifQ+8xFbvI7rlEMrp/A+JEEYyRXYuAa2F8U530T1r3C+l6N9qqSFml4T1Jde/+N6fO4nssklCPilJJPRFw7ftD65/600j5g=.PoP90tESy1DNCvnFalQfDvP8kM1i+nXTNRp3cwN2yL0=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQAR3+AgzSfTrtUan1QH4qpOsDd+j2Yn3acLBMznmvl/oD1jYltWYOZHQK8zDOLygS4UEB3NygI9O6NwPH64W/7cMFMudVROxdSpKSUutZx9JYBa6h7saLEelaOkIUFBLEOYfSeSLyWCZPb0j2QjCqS9dFr01EGaHzPkg+mQC2XoFRseMpvygkP1QQG2yPq1Po4tOc3V2RU9KEwAtXb1aye0p+YiNJIFBQ8co97MIwc/vVVj+ZFUXIKhTHkcuq4YMFPAL8sUTlLLaXh2kR4mo/PlTSHT+FmkfPfBzoKEjHesxBC4TSe6/fojdOpoj7QPWtumA0xxUYtxO2ZBP4r/0sXe" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-07T13:31:16.2320317Z" ComplexityLevel="Beginner" Signature="OHMU87WbQ8QWh5mdvHuw5HxQq1Ko8w0rr9eT8Ot9Vkw=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="fertiliza_oltp.movimiento_inventario 1" Left="145" Top="279" Width="776" Height="793" IsMinimized="true" ActiveActionIndex="5" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_movimiento" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1464" WindowHeight="844" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.movimiento_inventario" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_movimiento" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_producto" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_bodega" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_tipo_mov" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="fecha_movimiento" ColumnType="Date" />
+                        <SqlSelectItem Type="Column" Name="cantidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="numero_documento" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="referencia_toma" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="usuario_registro" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="observacion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_movimiento" IsExpression="false" DataType="Number" />
+                        <Item Name="id_producto" IsExpression="false" DataType="Number" />
+                        <Item Name="id_bodega" IsExpression="false" DataType="Number" />
+                        <Item Name="id_tipo_mov" IsExpression="false" DataType="Number" />
+                        <Item Name="fecha_movimiento" IsExpression="false" DataType="Date" />
+                        <Item Name="cantidad" IsExpression="false" DataType="Number" />
+                        <Item Name="numero_documento" IsExpression="false" DataType="Text" />
+                        <Item Name="referencia_toma" IsExpression="false" DataType="Number" />
+                        <Item Name="usuario_registro" IsExpression="false" DataType="Text" />
+                        <Item Name="observacion" IsExpression="false" DataType="Text" />
+                        <Item Name="creado_en" IsExpression="false" DataType="DateTime" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <KeepRemoveColumnsAction Mode="Remove" FailIfColumnsNotFound="true">
+                  <ColumnNames>
+                    <Item>numero_documento</Item>
+                    <Item>referencia_toma</Item>
+                    <Item>observacion</Item>
+                    <Item>id_bodega</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <SelectionFilterAction ColumnName="id_tipo_mov" RemoveSelectedValues="false">
+                  <Cells>
+                    <C T="n" V="1" />
+                  </Cells>
+                </SelectionFilterAction>
+                <SelectionFilterAction ColumnName="cantidad" RemoveSelectedValues="true">
+                  <Cells>
+                    <C T="n" V="1.00" />
+                    <C T="n" V="2.00" />
+                    <C T="n" V="2.50" />
+                    <C T="n" V="3.00" />
+                    <C T="n" V="4.00" />
+                    <C T="n" V="5.00" />
+                  </Cells>
+                </SelectionFilterAction>
+                <SortAction>
+                  <SortColumns>
+                    <SortColumn ColumnName="id_producto" SortOrder="Ascending" />
+                    <SortColumn ColumnName="fecha_movimiento" SortOrder="Descending" />
+                  </SortColumns>
+                </SortAction>
+                <DeduplicateAction CompareAllColumns="false">
+                  <ColumnNames>
+                    <Item>id_producto</Item>
+                  </ColumnNames>
+                </DeduplicateAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.producto 1" Left="72" Top="415" Width="939" Height="567" IsMinimized="true" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_vencimiento" />
+                    <MetaColumn OriginalName="modificado_en" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.producto" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_producto" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_producto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="id_categoria" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_marca" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_unidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="presentacion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha_vencimiento" ColumnType="Date" />
+                        <SqlSelectItem Type="Column" Name="dias_almacenaje" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_estado_lote" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="stock_minimo" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="activo" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="modificado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_producto" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo_producto" IsExpression="false" DataType="Text" />
+                        <Item Name="nombre" IsExpression="false" DataType="Text" />
+                        <Item Name="id_categoria" IsExpression="false" DataType="Number" />
+                        <Item Name="id_marca" IsExpression="false" DataType="Number" />
+                        <Item Name="id_unidad" IsExpression="false" DataType="Number" />
+                        <Item Name="presentacion" IsExpression="false" DataType="Text" />
+                        <Item Name="fecha_vencimiento" IsExpression="false" DataType="Date" />
+                        <Item Name="dias_almacenaje" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo_estado_lote" IsExpression="false" DataType="Text" />
+                        <Item Name="stock_minimo" IsExpression="false" DataType="Number" />
+                        <Item Name="activo" IsExpression="false" DataType="Boolean" />
+                        <Item Name="creado_en" IsExpression="false" DataType="DateTime" />
+                        <Item Name="modificado_en" IsExpression="false" DataType="DateTime" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.stg_inventario_raw 1" Left="136" Top="85" Width="1207" Height="585" IsMinimized="true" ActiveActionIndex="3" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_procesado" />
+                    <MetaColumn OriginalName="nombre_raw" Width="194" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.stg_inventario_raw" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_stg_inv" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_carga" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="fila_origen" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="hoja_origen" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="codigo_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fisico_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="sistema_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="diferencia_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="observacion_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="categoria_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="procesado" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="valido" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="motivo_rechazo" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha_procesado" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_stg_inv" IsExpression="false" DataType="Number" />
+                        <Item Name="id_carga" IsExpression="false" DataType="Number" />
+                        <Item Name="fila_origen" IsExpression="false" DataType="Number" />
+                        <Item Name="hoja_origen" IsExpression="false" DataType="Text" />
+                        <Item Name="codigo_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="nombre_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="fisico_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="sistema_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="diferencia_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="observacion_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="categoria_raw" IsExpression="false" DataType="Text" />
+                        <Item Name="procesado" IsExpression="false" DataType="Boolean" />
+                        <Item Name="valido" IsExpression="false" DataType="Boolean" />
+                        <Item Name="motivo_rechazo" IsExpression="false" DataType="Text" />
+                        <Item Name="fecha_procesado" IsExpression="false" DataType="DateTime" />
+                        <Item Name="creado_en" IsExpression="false" DataType="DateTime" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <SortAction>
+                  <SortColumns>
+                    <SortColumn ColumnName="id_stg_inv" SortOrder="Ascending" />
+                  </SortColumns>
+                </SortAction>
+                <ConvertDataTypesAction Conversion="TextToNumber" DecimalSeparator="Point" ThousandSeparator="Default" FailureOption="KeepOriginal">
+                  <ColumnNames>
+                    <Item>fisico_raw</Item>
+                    <Item>sistema_raw</Item>
+                    <Item>diferencia_raw</Item>
+                  </ColumnNames>
+                </ConvertDataTypesAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.control_inventario_semaforo" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_stg_inv" Name2="id_producto" />
+                    <NamePair Name1="codigo_raw" Name2="codigo_producto" />
+                    <NamePair Name1="nombre_raw" Name2="nombre" />
+                    <NamePair Name1="fisico_raw" Name2="fisico" />
+                    <NamePair Name1="sistema_raw" Name2="sistema" />
+                    <NamePair Name1="diferencia_raw" Name2="diferencia" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.stock_sistema 1" Left="1135" Top="309" Width="1192" Height="909" IsMinimized="false" ActiveActionIndex="6" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="ultima_entrada" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.control_inventario_semaforo" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_producto" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_producto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fisico" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="sistema" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="diferencia" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="ultima_entrada" ColumnType="Date" />
+                        <SqlSelectItem Type="Column" Name="dias_estancamiento" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="color_semaforo" ColumnType="Text" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_producto" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo_producto" IsExpression="false" DataType="Text" />
+                        <Item Name="nombre" IsExpression="false" DataType="Text" />
+                        <Item Name="fisico" IsExpression="false" DataType="Number" />
+                        <Item Name="sistema" IsExpression="false" DataType="Number" />
+                        <Item Name="diferencia" IsExpression="false" DataType="Number" />
+                        <Item Name="ultima_entrada" IsExpression="false" DataType="Date" />
+                        <Item Name="dias_estancamiento" IsExpression="false" DataType="Number" />
+                        <Item Name="color_semaforo" IsExpression="false" DataType="Text" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <LookupAction LookupTableName="fertiliza_oltp.movimiento_inventario 1" SecondTableExists="true" ColumnName="id_producto" LookupColumnName="id_producto" ReturnColumnName="fecha_movimiento" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <RenameColumnsAction>
+                  <Names>
+                    <NamePair Name1="fecha_movimiento" Name2="ultima_modificacion" />
+                  </Names>
+                </RenameColumnsAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <Columns>
+                    <NameExpressionPair Name="dias_inventariado">
+                      <Expression Value="#2026-05-08 - [ultima_modificacion]" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="color_semaforo">
+                      <Expression Value="if(isempty([ultima_modificacion]), &quot;Revisión&quot;,&#xD;&#xA;if([dias_inventariado] &lt;= 90, &quot;Verde&quot;,&#xD;&#xA;if([dias_inventariado] &lt;= 365, &quot;Amarillo&quot;,&#xD;&#xA;&quot;Rojo&quot;)))" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="id_semaforo">
+                      <Expression Value="if(isempty([ultima_modificacion]), 4,&#xD;&#xA;if([dias_inventariado] &lt;= 90, 1,&#xD;&#xA;if([dias_inventariado] &lt;= 365, 2,&#xD;&#xA;3)))" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <LookupAction LookupTableName="fertiliza_oltp.producto 1" SecondTableExists="true" ColumnName="id_producto" LookupColumnName="id_producto" ReturnColumnName="id_marca" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <LookupAction LookupTableName="fertiliza_oltp.producto 1" SecondTableExists="true" ColumnName="id_producto" LookupColumnName="id_producto" ReturnColumnName="id_categoria" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <ExportDatasetAction AutoStatus="true" Mode="Local" FileExistsOption="Overwrite" EncryptColumns="false" AppendMode="AddNewColumns" ExportMode="CreateOrOverwrite">
+                  <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Dimensions-FactTable\FactTemp.dset" Type="Path" />
+                </ExportDatasetAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>

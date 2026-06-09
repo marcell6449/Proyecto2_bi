@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.awrHsDk+GiY=.aNYnK+sbcEXakOxISWrVEQ==.BdS3udw0DgeZNOmlgidzv1kL5yymizWdDo9gAWRQss5mD1xpRQEuffvyt0qrOTV2JJ/rsOz3hdL2s734EwUtWbe5vEumpmkkZ1C57SMGcrA=./DvlrQXXEJIMKMUlRXOFDDt+LtCQtowglWUfIHWRdys=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQCZqGDMqxafL/o4I3wpLnKG3qVmB7Kxv8TkYtyXxxtUaLYkBSfnUJqX7tOUK8/gatqEqPXdBnJ42iyWWkSVJDua3PWuSlYhELHCvOyCx2Hn19IeOH9MENnppTbt8BS3vqoTCEESNggFcCXARoDgM9yG+wVzRb+PlkNwgGdxb2KHMe+cuak3QDkdq1qVboZfeosWrjW5BiJy126T+Mgb56yOGmfn2MQ5eEUCLOZg7zQWy3NJ51zSAwvfkd9HmXF+kan3kr9bBVbHGVUpeFbbWt+Irb9vutIoXtOC14G+4TwsXyhpa91AhORNqYQNgG88ofAnAMF6zvpHL/vUF75JI6TD" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-06T14:49:28.9299263Z" ComplexityLevel="Beginner" Signature="CRBCBA+v+zh4Sbvh7kgOSX2Zx9jmyJCWcvwI2PSw+qU=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="fertiliza_oltp.stg_inventario_raw 1" Left="101" Top="50" Width="1575" Height="842" IsMinimized="true" ActiveActionIndex="2" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_procesado" />
+                    <MetaColumn OriginalName="nombre_raw" Width="354" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.stg_inventario_raw" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_stg_inv" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_carga" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="fila_origen" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="hoja_origen" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="codigo_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fisico_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="sistema_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="diferencia_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="observacion_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="categoria_raw" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="procesado" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="valido" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="motivo_rechazo" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha_procesado" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+                <AddColumnsAction ColumnExistsOption="Rename">
+                  <Columns>
+                    <NameExpressionPair Name="categoria_jerarquizada">
+                      <Expression Value="if(&#xD;&#xA;   Upper(Trim([categoria_raw])) = &quot;GRANULAR - SOLUBLES&quot;,&#xD;&#xA;&#xD;&#xA;   if(&#xD;&#xA;      Contains(Upper([nombre_raw]),&quot;WG&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;DAP&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;UREA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;NPK&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;YARAMILA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;YARABELA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;YARAVERA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;GRANUPOTASE&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;DOLOMAG&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;AZUFERTIL&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;GRANUMAX&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;MOP&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;MF &quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;NITRO XTEND&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;NUTRIMON&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;PRODUMON&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;ENPALMA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;NITRASAM&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;SEMBRAMON&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;NUTRICARGA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;CAL DOLOMITA&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;CALIX&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;CALIX PURE&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;TALANTE&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;THIAMETOXAN&quot;),&#xD;&#xA;      &quot;Granular&quot;,&#xD;&#xA;&#xD;&#xA;      if(&#xD;&#xA;         Contains(Upper([nombre_raw]),&quot;WP&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;WS&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;SOLU&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MAP&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MKP&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;CALCINIT&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;NITRABOR&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MAGNISOL&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MICROCOMBO&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MICRO FE&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;FERTI K&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;FERTI MAG&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;METARIL&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;BAUBASIL&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;BAUBASSIL&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MICORRIZOL&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;TRICHO&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;ENZUP PDS&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MIKROTHOR&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;H2O PLUS&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;MANVERT H2O&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;GR5&quot;),&#xD;&#xA;         &quot;Soluble&quot;,&#xD;&#xA;&#xD;&#xA;         if(&#xD;&#xA;            Contains(Upper([nombre_raw]),&quot;POEMA&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;GATOS&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;PERROS&quot;),&#xD;&#xA;            &quot;Otros&quot;,&#xD;&#xA;            &quot;Granular - Solubles&quot;&#xD;&#xA;         )&#xD;&#xA;      )&#xD;&#xA;   ),&#xD;&#xA;&#xD;&#xA;   if(&#xD;&#xA;      Upper(Trim([categoria_raw])) = &quot;MATERIAL PARA INVERNADEROS - SUSTRATO Y OTROS&quot;,&#xD;&#xA;&#xD;&#xA;      if(&#xD;&#xA;         Contains(Upper([nombre_raw]),&quot;SUSTRATO&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;COCO MIX&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;TURBA&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;PERLITAS&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;BOLSA DE CRECIMIENTO&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;70/30&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;SC18L&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;SC12L&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot;ESSE SC&quot;),&#xD;&#xA;         &quot;Sustrato&quot;,&#xD;&#xA;&#xD;&#xA;         if(&#xD;&#xA;            Contains(Upper([nombre_raw]),&quot;JIFFY&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;CANALETA&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;SARAN&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;MULCH&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;GROUND COVER&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;MANTA AGRICOLA&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;SPACER&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;MACETA&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;BANDEJA&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;PELLET&quot;),&#xD;&#xA;            &quot;Material para Invernaderos&quot;,&#xD;&#xA;            &quot;Otros&quot;&#xD;&#xA;         )&#xD;&#xA;      ),&#xD;&#xA;&#xD;&#xA;      [categoria_raw]&#xD;&#xA;   )&#xD;&#xA;)" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="revision_manual">
+                      <Expression Value="if(&#xD;&#xA;   Upper(Trim([categoria_jerarquizada])) = &quot;SOLUBLE&quot;&#xD;&#xA;   or Upper(Trim([categoria_jerarquizada])) = &quot;GRANULAR&quot;&#xD;&#xA;   or Upper(Trim([categoria_jerarquizada])) = &quot;LIQUIDOS&quot;&#xD;&#xA;   or Upper(Trim([categoria_jerarquizada])) = &quot;MATERIAL PARA INVERNADEROS&quot;&#xD;&#xA;   or Upper(Trim([categoria_jerarquizada])) = &quot;SUSTRATO&quot;&#xD;&#xA;   or Upper(Trim([categoria_jerarquizada])) = &quot;OTROS&quot;,&#xD;&#xA;   &quot;OK&quot;,&#xD;&#xA;   &quot;REVISAR&quot;&#xD;&#xA;)" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="marca">
+                      <Expression Value="if(&#xD;&#xA;   StartsWith(Upper(Trim([codigo_raw])),&quot;ABP&quot;),&#xD;&#xA;   &quot;ABP&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   StartsWith(Upper(Trim([nombre_raw])),&quot;BIO &quot;)&#xD;&#xA;   or StartsWith(Upper(Trim([nombre_raw])),&quot;BIO -&quot;),&#xD;&#xA;   &quot;Biovenko&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;ABP -&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;ABP-&quot;),&#xD;&#xA;   &quot;ABP&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;BRANDT&quot;),&#xD;&#xA;   &quot;Brandt&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;FERTILISA&quot;),&#xD;&#xA;   &quot;Fertilisa&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;JIFFY&quot;),&#xD;&#xA;   &quot;Jiffy&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;MANVERT&quot;),&#xD;&#xA;   &quot;Manvert&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;MANTTRA&quot;),&#xD;&#xA;   &quot;Manttra&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;MF &quot;),&#xD;&#xA;   &quot;MF (Mosaic Fertilizantes)&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;NORDOX&quot;),&#xD;&#xA;   &quot;Nordox&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;NUTRIMON&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;MONOMEROS&quot;),&#xD;&#xA;   &quot;Monomeros&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;OPISTRA&quot;),&#xD;&#xA;   &quot;Opistra&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;QUIVER&quot;),&#xD;&#xA;   &quot;Quiver&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;YARAMILA&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;YARALIVA&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;YARATERA&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;YARAVERA&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;YARABELA&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot;YARA&quot;),&#xD;&#xA;   &quot;Yara&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;POEMA&quot;),&#xD;&#xA;   &quot;POEMA&quot;,&#xD;&#xA;&#xD;&#xA;if(&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot;GRANUPOTASE&quot;),&#xD;&#xA;   &quot;Haifa&quot;,&#xD;&#xA;&#xD;&#xA;   &quot;Desconocido&quot;&#xD;&#xA;))))))))))))))))" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="unidad">
+                      <Expression Value="if(&#xD;&#xA;&#xD;&#xA;   Contains(Upper([nombre_raw]),&quot; GRAMOS&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot; 250 G&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot; 500 G&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot; 100 G&quot;)&#xD;&#xA;   or Contains(Upper([nombre_raw]),&quot; G)&quot;),&#xD;&#xA;&#xD;&#xA;   &quot;G&quot;,&#xD;&#xA;&#xD;&#xA;   if(&#xD;&#xA;&#xD;&#xA;      Contains(Upper([nombre_raw]),&quot; KG&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot;KG&quot;)&#xD;&#xA;      or Contains(Upper([nombre_raw]),&quot; KGS&quot;),&#xD;&#xA;&#xD;&#xA;      &quot;Kg&quot;,&#xD;&#xA;&#xD;&#xA;      if(&#xD;&#xA;&#xD;&#xA;         Contains(Upper([nombre_raw]),&quot; GALON&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot; GAL &quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot; GALONES&quot;)&#xD;&#xA;         or Contains(Upper([nombre_raw]),&quot; 2.5 GAL&quot;),&#xD;&#xA;&#xD;&#xA;         &quot;Gal&quot;,&#xD;&#xA;&#xD;&#xA;         if(&#xD;&#xA;&#xD;&#xA;            Contains(Upper([nombre_raw]),&quot; LT&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot; LTS&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot; 20L&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot; 10L&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot; 5 L&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot; 1 LT&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;SC18L&quot;)&#xD;&#xA;            or Contains(Upper([nombre_raw]),&quot;SC12L&quot;),&#xD;&#xA;&#xD;&#xA;            &quot;Lt&quot;,&#xD;&#xA;&#xD;&#xA;            if(&#xD;&#xA;&#xD;&#xA;               Contains(Upper([nombre_raw]),&quot;CJ&quot;),&#xD;&#xA;&#xD;&#xA;               &quot;CJ&quot;,&#xD;&#xA;&#xD;&#xA;               if(&#xD;&#xA;&#xD;&#xA;                  Contains(Upper([nombre_raw]),&quot;ROLLO&quot;)&#xD;&#xA;                  or Contains(Upper([nombre_raw]),&quot;SARAN&quot;)&#xD;&#xA;                  or Contains(Upper([nombre_raw]),&quot;GROUND COVER&quot;)&#xD;&#xA;                  or Contains(Upper([nombre_raw]),&quot;MULCH&quot;)&#xD;&#xA;                  or Contains(Upper([nombre_raw]),&quot;MANTA AGRICOLA&quot;),&#xD;&#xA;&#xD;&#xA;                  &quot;Ro&quot;,&#xD;&#xA;&#xD;&#xA;                  &quot;Un&quot;&#xD;&#xA;&#xD;&#xA;               )&#xD;&#xA;&#xD;&#xA;            )&#xD;&#xA;&#xD;&#xA;         )&#xD;&#xA;&#xD;&#xA;      )&#xD;&#xA;&#xD;&#xA;   )&#xD;&#xA;&#xD;&#xA;)" Type="Expression" />
+                    </NameExpressionPair>
+                    <NameExpressionPair Name="presentacion">
+                      <Expression Value="if(&#xD;&#xA;&#xD;&#xA;   IsRegExMatch(Upper([nombre_raw]),&quot;CJ\d+&quot;),&#xD;&#xA;&#xD;&#xA;   RegExMatch(Upper([nombre_raw]),&quot;CJ\d+&quot;),&#xD;&#xA;&#xD;&#xA;   if(&#xD;&#xA;&#xD;&#xA;      IsRegExMatch(&#xD;&#xA;         Upper([nombre_raw]),&#xD;&#xA;         &quot;\d+([.,]\d+)?\s*(KG|KGS|LT|LTS|G|GRAMOS|LB)&quot;&#xD;&#xA;      ),&#xD;&#xA;&#xD;&#xA;      RegExMatch(&#xD;&#xA;         Upper([nombre_raw]),&#xD;&#xA;         &quot;\d+([.,]\d+)?\s*(KG|KGS|LT|LTS|G|GRAMOS|LB)&quot;&#xD;&#xA;      ),&#xD;&#xA;&#xD;&#xA;      if(&#xD;&#xA;&#xD;&#xA;         IsRegExMatch(&#xD;&#xA;            Upper([nombre_raw]),&#xD;&#xA;            &quot;\d+([.,]\d+)?M&quot;&#xD;&#xA;         ),&#xD;&#xA;&#xD;&#xA;         RegExMatch(&#xD;&#xA;            Upper([nombre_raw]),&#xD;&#xA;            &quot;\d+([.,]\d+)?M&quot;&#xD;&#xA;         ),&#xD;&#xA;&#xD;&#xA;         Empty()&#xD;&#xA;&#xD;&#xA;      )&#xD;&#xA;&#xD;&#xA;   )&#xD;&#xA;&#xD;&#xA;)" Type="Expression" />
+                    </NameExpressionPair>
+                  </Columns>
+                  <InsertPosition Position="Rightmost" />
+                </AddColumnsAction>
+                <ExportDatasetAction AutoStatus="true" Mode="Local" FileExistsOption="HaltProjectExecution" EncryptColumns="false" AppendMode="AddNewColumns" ExportMode="CreateOrOverwrite">
+                  <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\tempTransform.dset" Type="Path" />
+                </ExportDatasetAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.stg_inventario_raw 1 (2)" Left="1629" Top="210" Width="420" Height="478" IsMinimized="false" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <DeriveTableAction SourceTableName="fertiliza_oltp.stg_inventario_raw 1" IsConditional="false" />
+                <DeduplicateAction CompareAllColumns="false">
+                  <ColumnNames>
+                    <Item>categoria_jerarquizada</Item>
+                  </ColumnNames>
+                </DeduplicateAction>
+                <KeepRemoveColumnsAction Mode="Remove" FailIfColumnsNotFound="true">
+                  <ColumnNames>
+                    <Item>id_stg_inv</Item>
+                    <Item>id_carga</Item>
+                    <Item>fila_origen</Item>
+                    <Item>hoja_origen</Item>
+                    <Item>codigo_raw</Item>
+                    <Item>nombre_raw</Item>
+                    <Item>fisico_raw</Item>
+                    <Item>sistema_raw</Item>
+                    <Item>diferencia_raw</Item>
+                    <Item>observacion_raw</Item>
+                    <Item>categoria_raw</Item>
+                    <Item>procesado</Item>
+                    <Item>valido</Item>
+                    <Item>motivo_rechazo</Item>
+                    <Item>fecha_procesado</Item>
+                    <Item>creado_en</Item>
+                    <Item>revision_manual</Item>
+                    <Item>marca</Item>
+                    <Item>unidad</Item>
+                    <Item>presentacion</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <EnumerateRowsAction EnumerateInGroups="false" Repeat="false" />
+                <ExportDbAction IsDisabled="true" AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.categoria_producto" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_categoria" Name2="id_categoria" />
+                    <NamePair Name1="categoria_jerarquizada" Name2="nombre" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.stg_inventario_raw 1 (3)" Left="1110" Top="648" Width="847" Height="437" IsMinimized="false" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <DeriveTableAction SourceTableName="fertiliza_oltp.stg_inventario_raw 1" IsConditional="false" />
+                <KeepRemoveColumnsAction Mode="Keep">
+                  <ColumnNames>
+                    <Item>unidad</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <DeduplicateAction CompareAllColumns="false">
+                  <ColumnNames>
+                    <Item>unidad</Item>
+                  </ColumnNames>
+                </DeduplicateAction>
+                <EnumerateRowsAction EnumerateInGroups="false" Repeat="false" />
+                <ExportDbAction IsDisabled="true" AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.unidad_medida" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="RowNo" Name2="id_unidad" />
+                    <NamePair Name1="unidad" Name2="codigo" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="fertiliza_oltp.stg_inventario_raw 1 (4)" Left="112" Top="544" Width="1299" Height="597" IsMinimized="true" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <DeriveTableAction SourceTableName="fertiliza_oltp.stg_inventario_raw 1" IsConditional="false" />
+                <DeduplicateAction CompareAllColumns="false">
+                  <ColumnNames>
+                    <Item>marca</Item>
+                  </ColumnNames>
+                </DeduplicateAction>
+                <KeepRemoveColumnsAction Mode="Keep">
+                  <ColumnNames>
+                    <Item>marca</Item>
+                  </ColumnNames>
+                </KeepRemoveColumnsAction>
+                <EnumerateRowsAction EnumerateInGroups="false" Repeat="false" />
+                <ExportDbAction IsDisabled="true" AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.marca_proveedor" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="id_marca" Name2="id_marca" />
+                    <NamePair Name1="marca" Name2="nombre_marca" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>

@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Version="29" AppVersion="5.9.8.17" ReadKey="readkey.2AcTsZEuJX4=.eHcPKnRl9/+wfOCuPVl5xQ==.07Vcx3L2VJ5WItG+2iqARVhQoY9kJ72CWx3bK5DDMWwOc4il1ncvqwYuQSLRRm+ZYpvwpD4kCzrkgzrp0UWUUllK2Iwwv/eGZLSQPVxelmU=.rZ2WOiHizolw+JB6eYuZGd6GqQDvBfKm1tUuNToL6WI=." WriteKeyPublic="BgIAAACkAABSU0ExAAgAAAEAAQAJ9Vl0ESxgHv4wcmPNVfLONYurxVQf0TU68/63K6AIADeJCNEhEP0U9Qux28OvvIduS6DwUlkgDFGBWFBdZP0H6kWBsTd2Y4sLVuO9MtM4Zl0Vxj0dXdz1nBiUCTHINQqszdcUnNOu5zkCQgxXHsMHurjQHiESnOd4fJZr+u3BivXltJekx+IdmQ4Mlyh1MXuFrhVWzvwQvNHCye7PFCqc5JhB7/qplizGwITN3UNRJvVV3h/oqSK4GGUv6Ev66jv67uT2BvQT0aYvDayFpl5sWWixHjDxotwGYd+noc04Pp2Rf9+12oxOMky3K9ZTpMSrz/q70QrfFm0XstA1FXyr" StartModuleName="Main" DocumentationTableOrder="ByExecutionOrder" EditedBy="A\axelb" LastEdited="2026-06-07T11:27:12.6893403Z" ComplexityLevel="Beginner" Signature="kJG4WB/EfOfBXmbEWkt/I3j7OA5J4RNq4tj+n5PTa/E=">
+  <Modules>
+    <Module Name="Main" AutoRun="true" SelectedGroupName="Group 1">
+      <Groups>
+        <Group Name="Group 1">
+          <Tables>
+            <Table Name="fertiliza_oltp.producto 1" Left="10" Top="8" Width="834" Height="300" IsMinimized="true" ActiveActionIndex="0" ViewMode="Table">
+              <Actions>
+                <ImportSqlAction QueryLocationType="VisualEditor">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="creado_en" />
+                    <MetaColumn OriginalName="fecha_vencimiento" />
+                    <MetaColumn OriginalName="modificado_en" />
+                  </MetaColumns>
+                  <Query Version="7" AppVersion="5.9.8.17" QueryType="QueryBuilder" UseEmbeddedParameters="false" WindowWidth="1070" WindowHeight="600" QueryBuilderObjectsAreaWidth="255" QueryBuilderFiltersAreaHeight="250">
+                    <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                    <QueryModel WhereConditionType="ConditionBuilder" HavingConditionType="ConditionBuilder" SelectAllRows="true" UseDistinct="false" AutoPreview="true" PreviewRows="100" PreFilterColumnValues="true">
+                      <TableName Value="fertiliza_oltp.producto" Type="List" />
+                      <SelectItems>
+                        <SqlSelectItem Type="Column" Name="id_producto" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_producto" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="nombre" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="id_categoria" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_marca" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="id_unidad" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="presentacion" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="fecha_vencimiento" ColumnType="Date" />
+                        <SqlSelectItem Type="Column" Name="dias_almacenaje" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="codigo_estado_lote" ColumnType="Text" />
+                        <SqlSelectItem Type="Column" Name="stock_minimo" ColumnType="Number" />
+                        <SqlSelectItem Type="Column" Name="activo" ColumnType="Boolean" />
+                        <SqlSelectItem Type="Column" Name="creado_en" ColumnType="DateTime" />
+                        <SqlSelectItem Type="Column" Name="modificado_en" ColumnType="DateTime" />
+                      </SelectItems>
+                      <Expressions />
+                      <WhereConditionTree />
+                      <HavingConditionTree />
+                      <KnownDataTypes>
+                        <Item Name="id_producto" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo_producto" IsExpression="false" DataType="Text" />
+                        <Item Name="nombre" IsExpression="false" DataType="Text" />
+                        <Item Name="id_categoria" IsExpression="false" DataType="Number" />
+                        <Item Name="id_marca" IsExpression="false" DataType="Number" />
+                        <Item Name="id_unidad" IsExpression="false" DataType="Number" />
+                        <Item Name="presentacion" IsExpression="false" DataType="Text" />
+                        <Item Name="fecha_vencimiento" IsExpression="false" DataType="Date" />
+                        <Item Name="dias_almacenaje" IsExpression="false" DataType="Number" />
+                        <Item Name="codigo_estado_lote" IsExpression="false" DataType="Text" />
+                        <Item Name="stock_minimo" IsExpression="false" DataType="Number" />
+                        <Item Name="activo" IsExpression="false" DataType="Boolean" />
+                        <Item Name="creado_en" IsExpression="false" DataType="DateTime" />
+                        <Item Name="modificado_en" IsExpression="false" DataType="DateTime" />
+                      </KnownDataTypes>
+                    </QueryModel>
+                    <Parameters />
+                  </Query>
+                </ImportSqlAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="TempEntradas.dset" Left="159" Top="196" Width="1472" Height="827" IsMinimized="false" ActiveActionIndex="4" ViewMode="Table">
+              <Actions>
+                <ImportDatasetAction AutoStatus="true" Mode="Local" ImportMode="Data" LoadAllColumns="true">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="BODEGA" Width="283" />
+                    <MetaColumn OriginalName="fecha" />
+                  </MetaColumns>
+                  <InputFileDefinition Mode="Single">
+                    <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\TempEntradas.dset" Type="Path" />
+                  </InputFileDefinition>
+                </ImportDatasetAction>
+                <RenameColumnsAction>
+                  <Names>
+                    <NamePair Name1="id_producto" Name2="CodigoProducto" />
+                  </Names>
+                </RenameColumnsAction>
+                <LookupAction LookupTableName="fertiliza_oltp.producto 1" SecondTableExists="true" ColumnName="CodigoProducto" LookupColumnName="codigo_producto" ReturnColumnName="id_producto" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <SelectionFilterAction ColumnName="id_producto" RemoveSelectedValues="true">
+                  <Cells>
+                    <C T="o" V="&lt;empty&gt;" />
+                  </Cells>
+                </SelectionFilterAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.movimiento_inventario" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="cantidad" Name2="cantidad" />
+                    <NamePair Name1="fecha" Name2="fecha_movimiento" />
+                    <NamePair Name1="id_tipo_mov" Name2="id_tipo_mov" />
+                    <NamePair Name1="id_producto" Name2="id_producto" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+            <Table Name="TempSalidas.dset" Left="788" Top="153" Width="1567" Height="739" IsMinimized="false" ActiveActionIndex="2" ViewMode="Table">
+              <Actions>
+                <ImportDatasetAction AutoStatus="true" Mode="Local" ImportMode="Data" LoadAllColumns="true">
+                  <MetaColumns>
+                    <MetaColumn OriginalName="BODEGA" Width="283" />
+                    <MetaColumn OriginalName="fecha" />
+                    <MetaColumn OriginalName="ob" Width="421" />
+                    <MetaColumn OriginalName="Tipo_Movimiento" Width="188" />
+                  </MetaColumns>
+                  <InputFileDefinition Mode="Single">
+                    <FileName Value="C:\Users\axelb\OneDrive\Escritorio\Proyecto2\ETL\Transform\TempSalidas.dset" Type="Path" />
+                  </InputFileDefinition>
+                </ImportDatasetAction>
+                <LookupAction LookupTableName="fertiliza_oltp.producto 1" SecondTableExists="true" ColumnName="serie" LookupColumnName="codigo_producto" ReturnColumnName="id_producto" CreateNewColumn="true" ValueNotFoundOption="MakeEmpty" />
+                <SelectionFilterAction ColumnName="id_producto" RemoveSelectedValues="true">
+                  <Cells>
+                    <C T="o" V="&lt;empty&gt;" />
+                  </Cells>
+                </SelectionFilterAction>
+                <ExportDbAction AutoStatus="true" UseCustomSql="false" CustomSql="" BatchSize="100" ColumnTypeMismatchOption="FailBatch" BatchFailureOption="Halt" ColumnMappingMode="Explicit">
+                  <DataConnectorDefinition IsShared="true" Type="List" Name="Proyecto2" />
+                  <TableName Value="fertiliza_oltp.movimiento_inventario" Type="List" />
+                  <ColumnMappings>
+                    <NamePair Name1="fecha" Name2="fecha_movimiento" />
+                    <NamePair Name1="Cantidad" Name2="cantidad" />
+                    <NamePair Name1="id_tipo_mov" Name2="id_tipo_mov" />
+                    <NamePair Name1="id_producto" Name2="id_producto" />
+                  </ColumnMappings>
+                </ExportDbAction>
+              </Actions>
+              <AnalysisView Version="2" AppVersion="5.9.8.17" LayoutMode="Filters" />
+            </Table>
+          </Tables>
+        </Group>
+      </Groups>
+      <Parameters />
+      <Report UseCustomFileNameForPdfExport="false" ShowPageBorders="true">
+        <Pages>
+          <Page Name="Page 1" IncludeInReport="true">
+            <ReportObjects />
+          </Page>
+        </Pages>
+        <PageSetup Orientation="Landscape" Margin="Narrow" Size="Letter" />
+      </Report>
+    </Module>
+  </Modules>
+  <ProtectedDataConnectors />
+  <Resources />
+</Project>
