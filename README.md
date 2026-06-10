@@ -100,6 +100,8 @@ El flujo ETL consta de tres etapas con cinco transformaciones no triviales:
 | Herramienta | Propósito |
 |---|---|
 | PostgreSQL | Base de datos del Data Warehouse |
+| Python | Script inicial para landing|
+| Azure | Almacenamiento en cloud de la base de datos|
 | EasyMorph | Diseño y ejecución del proceso ETL |
 | Power BI | Visualizaciones y dashboards analíticos |
 | GitHub | Control de versiones y colaboración |
@@ -112,6 +114,8 @@ El flujo ETL consta de tres etapas con cinco transformaciones no triviales:
 ### Requisitos Previos
 
 - PostgreSQL 14 o superior instalado y en ejecución.
+- Python y sus librerias, para instalar correr pip install openpyxl psycopg2-binary python-dotenv
+python etl_landing.py --input-dir ./archivos --log-dir ./logs --usuario juan
 - EasyMorph (versión compatible con los archivos `.morph` del repositorio).
 - Power BI Desktop para visualizar los archivos `.pbix`.
 - Archivo fuente `Resumen.xlsx` con la toma física de inventario.
@@ -133,7 +137,8 @@ psql -d fertiliza_dwh -f SQL/fertiliza_oltp.sql      -- Esquema operacional (lan
 psql -d fertiliza_dwh -f SQL/fertiliza_landing.sql   -- Tablas de staging
 psql -d fertiliza_dwh -f SQL/fertiliza_dwh.sql       -- Modelo dimensional
 ```
-
+**1.5 Ejecutar archivo Python**
+   python etl_landing.py --input-dir ./archivos --log-dir ./logs --usuario juan
 **2. Ejecutar el proceso ETL en EasyMorph**
 
 Abrir EasyMorph y ejecutar los archivos en el siguiente orden desde `src/ETL/`:
